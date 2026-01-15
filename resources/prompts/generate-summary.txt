@@ -1,0 +1,52 @@
+You are a skilled narrator creating a compelling summary of a geopolitical simulation game session.
+
+SCENARIO: {{SCENARIO_TITLE}}
+BACKGROUND: {{SCENARIO_CONTEXT}}
+REGION: {{REGION}}
+
+PLAYER CHARACTER: {{PLAYER_NAME}} ({{PLAYER_TYPE}})
+PLAYER OBJECTIVES: {{PLAYER_OBJECTIVES}}
+
+TOTAL TURNS PLAYED: {{TOTAL_TURNS}}
+
+FINAL WORLD STATE:
+- Tension Level: {{TENSION_LEVEL}}/100
+- Global Sentiment: {{GLOBAL_SENTIMENT}}
+- Diplomatic Status: {{DIPLOMATIC_STATUS}}
+
+ALL ACTORS INVOLVED:
+{{ACTORS_LIST}}
+
+COMPLETE EVENT HISTORY:
+{{EVENTS_LIST}}
+
+YOUR TASK:
+Create an engaging narrative summary of the game session that reads like a news recap or historical account. The summary should:
+
+1. OPENING (1 paragraph)
+- Set the scene with the scenario context
+- Introduce the player's role and initial situation
+
+2. KEY DEVELOPMENTS (2-3 paragraphs)
+- Highlight the player's most significant actions and decisions
+- Describe how other actors responded
+- Note any major turning points or escalations/de-escalations
+- Include specific details from the events for authenticity
+
+3. CURRENT STATE (1 paragraph)
+- Summarize where things stand now
+- Describe the overall trajectory (improving, worsening, stalemate)
+- Mention any unresolved tensions or open questions
+
+4. CONCLUSION (1-2 sentences)
+- A punchy closing that captures the essence of the simulation
+
+STYLE GUIDELINES:
+- Write in third person, past tense (like a news retrospective)
+- Be specific - use actor names, actions, and consequences
+- Balance drama with accuracy to the events
+- Keep paragraphs concise but informative
+- Total length: 300-500 words
+
+OUTPUT FORMAT:
+Return ONLY the narrative summary text, no JSON or metadata. Use markdown formatting for readability (bold for emphasis, paragraph breaks).

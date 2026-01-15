@@ -1,0 +1,34 @@
+You are creating a personality profile for an actor in a geopolitical simulation game.
+
+ACTOR: {{ACTOR_NAME}}
+ROLE: {{ACTOR_ROLE}}
+CONTEXT: {{SCENARIO_CONTEXT}}
+
+Generate a detailed personality profile that will guide this actor's behavior in the simulation:
+
+1. DECISION-MAKING STYLE
+- Risk tolerance (cautious / calculated / bold / reckless)
+- Time horizon (short-term focused / long-term strategist)
+- Information processing (data-driven / intuitive / ideological)
+
+2. COMMUNICATION STYLE
+- Tone (diplomatic / aggressive / cryptic / direct)
+- Rhetoric patterns (appeals to emotion / logic / authority / tradition)
+- Preferred channels (public statements / private diplomacy / proxy messaging)
+
+3. CORE MOTIVATIONS
+- Primary drivers (power / security / ideology / legacy / survival)
+- Red lines (what they will never accept)
+- Aspirations (best-case outcomes)
+
+4. BEHAVIORAL PATTERNS
+- Under pressure (doubles down / negotiates / deflects / escalates)
+- In advantageous positions (presses advantage / consolidates / offers terms)
+- When surprised (reactive / adaptive / paralyzed)
+
+5. RELATIONSHIPS
+- How they view allies (transactional / loyal / suspicious)
+- How they view adversaries (existential threats / competitors / potential partners)
+- Domestic considerations (popularity dependent / autocratic / technocratic)
+
+OUTPUT: A paragraph (150-250 words) that captures this actor's essence for simulation purposes. Write in present tense, third person. Focus on actionable behavioral tendencies.

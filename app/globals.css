@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --game-bg: #0a0a0f;
+  --game-card: #13131a;
+  --game-border: #2a2a3a;
+  --game-accent: #6366f1;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a3a transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #2a2a3a;
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #3a3a4a;
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-game-card/80 backdrop-blur-xl border border-game-border rounded-2xl;
+  }
+  
+  .glass-card-hover {
+    @apply glass-card transition-all duration-300 hover:border-game-accent/50 hover:shadow-lg hover:shadow-game-accent/10;
+  }
+  
+  .btn-primary {
+    @apply px-6 py-3 bg-game-accent hover:bg-game-accent/90 text-white font-medium rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply px-6 py-3 bg-game-card border border-game-border hover:border-game-accent/50 text-white font-medium rounded-xl transition-all duration-200;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-3 bg-game-bg border border-game-border rounded-xl focus:outline-none focus:border-game-accent transition-colors;
+  }
+  
+  .badge {
+    @apply px-3 py-1 text-xs font-medium rounded-full;
+  }
+  
+  .badge-danger {
+    @apply badge bg-red-500/20 text-red-400;
+  }
+  
+  .badge-warning {
+    @apply badge bg-amber-500/20 text-amber-400;
+  }
+  
+  .badge-success {
+    @apply badge bg-green-500/20 text-green-400;
+  }
+  
+  .badge-info {
+    @apply badge bg-blue-500/20 text-blue-400;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-game-accent to-purple-500 bg-clip-text text-transparent;
+  }
+  
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 5px theme('colors.game-accent'), 0 0 10px theme('colors.game-accent');
+    }
+    to {
+      box-shadow: 0 0 10px theme('colors.game-accent'), 0 0 20px theme('colors.game-accent');
+    }
+  }
+  
+  .typing-indicator::after {
+    content: '...';
+    animation: typing 1.5s infinite;
+  }
+  
+  @keyframes typing {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
+  }
+}
+
+/* Custom animations for events */
+.event-enter {
+  animation: eventEnter 0.4s ease-out forwards;
+}
+
+@keyframes eventEnter {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Tension meter pulse */
+.tension-pulse {
+  animation: tensionPulse 1s ease-in-out infinite;
+}
+
+@keyframes tensionPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}

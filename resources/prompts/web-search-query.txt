@@ -1,0 +1,38 @@
+You are helping discover information about a current affairs scenario for a geopolitical simulation game.
+
+USER QUERY: {{USER_QUERY}}
+
+Generate 3-5 specific web search queries that will help gather comprehensive information about:
+
+1. TIMELINE QUERY
+- Search for key events and dates
+- Example: "Russia Ukraine war timeline 2022-2024 major events"
+
+2. ACTORS QUERY  
+- Search for key players and their roles
+- Example: "key leaders Russia Ukraine conflict Zelensky Putin"
+
+3. CURRENT STATUS QUERY
+- Search for latest developments
+- Example: "Russia Ukraine war current situation January 2024"
+
+4. CONTEXT QUERY
+- Search for background and causes
+- Example: "Russia Ukraine conflict historical background causes"
+
+5. ANALYSIS QUERY (optional)
+- Search for expert analysis and perspectives
+- Example: "Russia Ukraine war analysis international response"
+
+OUTPUT FORMAT (JSON):
+{
+  "queries": [
+    {
+      "purpose": "timeline",
+      "query": "search query string"
+    },
+    ...
+  ]
+}
+
+Keep queries specific and likely to return high-quality, factual sources.
