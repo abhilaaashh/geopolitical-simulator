@@ -1,13 +1,13 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { useGameStore } from '@/lib/store';
 import { formatTime, getSentimentColor } from '@/lib/utils';
 import { 
   User, Globe, Radio, AlertTriangle, Zap, 
-  TrendingUp, TrendingDown, ChevronRight 
+  TrendingUp, TrendingDown, ChevronRight, ChevronDown 
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { GameEvent } from '@/lib/types';
 import { TweetCard, NewsArticleCard, PressReleaseCard } from './media';
 
@@ -154,49 +154,135 @@ function EventCard({ event, actorColor }: { event: GameEvent; actorColor?: strin
 }
 
 export function EventFeed() {
-  const { events, scenario, isProcessing } = useGameStore();
+  const { events, scenario, isProcessing, playerActorId } = useGameStore();
   const feedRef = useRef<HTMLDivElement>(null);
+  const lastPlayerActionIndexRef = useRef<number>(-1);
+  const [newUpdatesCount, setNewUpdatesCount] = useState(0);
+  const [isAtBottom, setIsAtBottom] = useState(true);
+  const seenEventsCountRef = useRef<number>(0);
 
-  // Auto-scroll to bottom on new events
-  useEffect(() => {
-    if (feedRef.current) {
-      feedRef.current.scrollTop = feedRef.current.scrollHeight;
+  // Find the latest player action index
+  const latestPlayerActionIndex = events.findLastIndex(e => e.isPlayerAction || e.actorId === playerActorId);
+
+  // Check if user is scrolled to the bottom
+  const checkIfAtBottom = useCallback(() => {
+    if (!feedRef.current) return true;
+    const { scrollTop, scrollHeight, clientHeight } = feedRef.current;
+    return scrollHeight - scrollTop - clientHeight < 100;
+  }, []);
+
+  // Handle scroll events
+  const handleScroll = useCallback(() => {
+    const atBottom = checkIfAtBottom();
+    setIsAtBottom(atBottom);
+    if (atBottom) {
+      setNewUpdatesCount(0);
+      seenEventsCountRef.current = events.length;
     }
-  }, [events]);
+  }, [checkIfAtBottom, events.length]);
+
+  // Track new events and update count
+  useEffect(() => {
+    // If a new player action was added, scroll to it
+    if (latestPlayerActionIndex > lastPlayerActionIndexRef.current && latestPlayerActionIndex !== -1) {
+      lastPlayerActionIndexRef.current = latestPlayerActionIndex;
+      seenEventsCountRef.current = events.length;
+      setNewUpdatesCount(0);
+      
+      // Scroll to bottom to show the player's action
+      if (feedRef.current) {
+        feedRef.current.scrollTop = feedRef.current.scrollHeight;
+      }
+      return;
+    }
+
+    // If there are new events after the last seen count
+    if (events.length > seenEventsCountRef.current) {
+      const newCount = events.length - seenEventsCountRef.current;
+      
+      if (checkIfAtBottom()) {
+        // If at bottom, mark as seen and scroll
+        seenEventsCountRef.current = events.length;
+        setNewUpdatesCount(0);
+        if (feedRef.current) {
+          feedRef.current.scrollTop = feedRef.current.scrollHeight;
+        }
+      } else {
+        // If not at bottom, show the new updates indicator
+        setNewUpdatesCount(newCount);
+      }
+    }
+  }, [events, latestPlayerActionIndex, checkIfAtBottom]);
+
+  // Scroll to bottom function
+  const scrollToBottom = useCallback(() => {
+    if (feedRef.current) {
+      feedRef.current.scrollTo({
+        top: feedRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+      setNewUpdatesCount(0);
+      seenEventsCountRef.current = events.length;
+    }
+  }, [events.length]);
 
   const getActorColor = (actorId: string) => {
     return scenario?.actors.find(a => a.id === actorId)?.color;
   };
 
   return (
-    <div ref={feedRef} className="h-full overflow-y-auto p-3 sm:p-6">
-      <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4">
-        {events.map((event) => (
-          <EventCard 
-            key={event.id} 
-            event={event} 
-            actorColor={getActorColor(event.actorId)}
-          />
-        ))}
-        
-        {isProcessing && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="glass-card p-3 sm:p-5"
-          >
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-game-accent/20 flex items-center justify-center">
-                <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-game-accent border-t-transparent rounded-full animate-spin" />
+    <div className="relative h-full">
+      <div 
+        ref={feedRef} 
+        className="h-full overflow-y-auto p-3 sm:p-6"
+        onScroll={handleScroll}
+      >
+        <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4">
+          {events.map((event) => (
+            <EventCard 
+              key={event.id} 
+              event={event} 
+              actorColor={getActorColor(event.actorId)}
+            />
+          ))}
+          
+          {isProcessing && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="glass-card p-3 sm:p-5"
+            >
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-game-accent/20 flex items-center justify-center">
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-game-accent border-t-transparent rounded-full animate-spin" />
+                </div>
+                <div>
+                  <p className="font-medium text-sm sm:text-base">Processing world events...</p>
+                  <p className="text-xs sm:text-sm text-gray-500">The world is responding to your action</p>
+                </div>
               </div>
-              <div>
-                <p className="font-medium text-sm sm:text-base">Processing world events...</p>
-                <p className="text-xs sm:text-sm text-gray-500">The world is responding to your action</p>
-              </div>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
+        </div>
       </div>
+
+      {/* New updates indicator */}
+      <AnimatePresence>
+        {newUpdatesCount > 0 && !isAtBottom && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            onClick={scrollToBottom}
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 bg-game-accent hover:bg-game-accent/90 text-white rounded-full shadow-lg shadow-game-accent/25 transition-colors"
+          >
+            <ChevronDown className="w-4 h-4" />
+            <span className="text-sm font-medium">
+              {newUpdatesCount} new update{newUpdatesCount > 1 ? 's' : ''}
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
