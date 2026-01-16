@@ -1,7 +1,7 @@
 'use client';
 
 import { useGameStore } from '@/lib/store';
-import { WorldStatePanel } from './WorldStatePanel';
+import { useAuth } from '@/lib/auth-context';
 import { ActorsSidebar } from './ActorsSidebar';
 import { EventFeed } from './EventFeed';
 import { ChatView } from './ChatView';
@@ -9,15 +9,32 @@ import { SocialView } from './SocialView';
 import { ActionInput } from './ActionInput';
 import { ViewToggle } from './ViewToggle';
 import { GoalProgress, GoalProgressCompact } from './GoalProgress';
-import { Menu, X, Users, ScrollText } from 'lucide-react';
+import { SessionManager } from './SessionManager';
+import { LoginModal } from '@/components/auth/LoginModal';
+import { UserMenu } from '@/components/auth/UserMenu';
+import { Menu, X, Users, ScrollText, Save, History, LogIn } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SummaryModal } from './SummaryModal';
 
 export function GameInterface() {
   const { scenario, viewMode, currentTurn, playerGoal, resetGame } = useGameStore();
+  const { user, isLoading } = useAuth();
   const [showSidebar, setShowSidebar] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showSessions, setShowSessions] = useState(false);
+  const [sessionInitialTab, setSessionInitialTab] = useState<'sessions' | 'save'>('sessions');
+
+  const openSaveTab = () => {
+    setSessionInitialTab('save');
+    setShowSessions(true);
+  };
+
+  const openSessionsTab = () => {
+    setSessionInitialTab('sessions');
+    setShowSessions(true);
+  };
 
   if (!scenario) return null;
 
@@ -25,35 +42,81 @@ export function GameInterface() {
   if (viewMode === 'social') {
     return (
       <div className="h-screen flex flex-col overflow-hidden">
-        {/* Minimal top bar for social view */}
-        <header className="glass-card rounded-none border-x-0 border-t-0 px-6 py-3 flex items-center justify-between z-20">
-          <div className="flex items-center gap-4">
-            <div>
-              <h1 className="font-bold text-lg">{scenario.title}</h1>
-              <p className="text-sm text-gray-400">Turn {currentTurn}</p>
+        {/* Unified top bar for social view */}
+        <header className="glass-card rounded-none border-x-0 border-t-0 px-4 py-2 flex items-center justify-between z-20">
+          <div className="flex items-center gap-3">
+            {/* Logo */}
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-game-accent to-purple-600 flex items-center justify-center shrink-0">
+              <span className="text-sm font-bold">SR</span>
+            </div>
+            <div className="hidden sm:block border-r border-game-border pr-3">
+              <h1 className="font-bold text-sm leading-tight">{scenario.title}</h1>
+              <p className="text-xs text-gray-500">Turn {currentTurn}</p>
             </div>
             {/* Compact goal progress in header for social view */}
             {playerGoal && (
-              <div className="hidden md:block w-64 lg:w-80">
+              <div className="hidden md:block w-48 lg:w-64">
                 <GoalProgressCompact goal={playerGoal} />
               </div>
             )}
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <ViewToggle />
             <button
               onClick={() => setShowSummary(true)}
-              className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1.5"
+              className="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 px-2 py-1.5 hover:bg-white/5 rounded"
             >
-              <ScrollText className="w-4 h-4" />
-              Summary
+              <ScrollText className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Summary</span>
             </button>
+            
+            <div className="h-4 w-px bg-game-border mx-1" />
+            
+            {/* Save button */}
+            {user && (
+              <button
+                onClick={openSaveTab}
+                className="flex items-center gap-1.5 px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Save</span>
+              </button>
+            )}
+            
+            {/* Sessions button */}
+            {user && (
+              <button
+                onClick={openSessionsTab}
+                className="flex items-center gap-1.5 px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
+              >
+                <History className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Sessions</span>
+              </button>
+            )}
+            
+            {/* Auth */}
+            {isLoading ? (
+              <div className="w-7 h-7 rounded-full bg-white/10 animate-pulse" />
+            ) : user ? (
+              <UserMenu onOpenSessions={openSessionsTab} />
+            ) : (
+              <button
+                onClick={() => setShowLogin(true)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 bg-game-accent hover:bg-game-accent/90 rounded text-xs font-medium transition-colors"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Sign In</span>
+              </button>
+            )}
+            
+            <div className="h-4 w-px bg-game-border mx-1" />
+            
             <button
               onClick={resetGame}
-              className="text-sm text-gray-400 hover:text-white transition-colors"
+              className="text-xs text-gray-400 hover:text-white transition-colors px-2 py-1.5 hover:bg-white/5 rounded"
             >
-              Exit Game
+              Exit
             </button>
           </div>
         </header>
@@ -75,8 +138,10 @@ export function GameInterface() {
           <ActionInput />
         </div>
 
-        {/* Summary Modal */}
+        {/* Modals */}
         <SummaryModal isOpen={showSummary} onClose={() => setShowSummary(false)} />
+        <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
+        <SessionManager isOpen={showSessions} onClose={() => setShowSessions(false)} initialTab={sessionInitialTab} />
       </div>
     );
   }
@@ -84,35 +149,83 @@ export function GameInterface() {
   // Standard layout for cards and chat view
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      {/* Top bar */}
-      <header className="glass-card rounded-none border-x-0 border-t-0 px-6 py-3 flex items-center justify-between z-20">
-        <div className="flex items-center gap-4">
+      {/* Unified top bar */}
+      <header className="glass-card rounded-none border-x-0 border-t-0 px-4 py-2 flex items-center justify-between z-20">
+        <div className="flex items-center gap-3">
+          {/* Logo */}
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-game-accent to-purple-600 flex items-center justify-center shrink-0">
+            <span className="text-sm font-bold">SR</span>
+          </div>
+          
           <button
             onClick={() => setShowSidebar(!showSidebar)}
-            className="lg:hidden p-2 hover:bg-game-border rounded-lg transition-colors"
+            className="lg:hidden p-1.5 hover:bg-game-border rounded transition-colors"
           >
-            {showSidebar ? <X className="w-5 h-5" /> : <Users className="w-5 h-5" />}
+            {showSidebar ? <X className="w-4 h-4" /> : <Users className="w-4 h-4" />}
           </button>
-          <div>
-            <h1 className="font-bold text-lg">{scenario.title}</h1>
-            <p className="text-sm text-gray-400">Turn {currentTurn}</p>
+          
+          <div className="border-r border-game-border pr-3">
+            <h1 className="font-bold text-sm leading-tight">{scenario.title}</h1>
+            <p className="text-xs text-gray-500">Turn {currentTurn}</p>
           </div>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <ViewToggle />
           <button
             onClick={() => setShowSummary(true)}
-            className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1.5"
+            className="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 px-2 py-1.5 hover:bg-white/5 rounded"
           >
-            <ScrollText className="w-4 h-4" />
-            Summary
+            <ScrollText className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Summary</span>
           </button>
+          
+          <div className="h-4 w-px bg-game-border mx-1" />
+          
+          {/* Save button */}
+          {user && (
+            <button
+              onClick={openSaveTab}
+              className="flex items-center gap-1.5 px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
+            >
+              <Save className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Save</span>
+            </button>
+          )}
+          
+          {/* Sessions button */}
+          {user && (
+            <button
+              onClick={openSessionsTab}
+              className="flex items-center gap-1.5 px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
+            >
+              <History className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Sessions</span>
+            </button>
+          )}
+          
+          {/* Auth */}
+          {isLoading ? (
+            <div className="w-7 h-7 rounded-full bg-white/10 animate-pulse" />
+          ) : user ? (
+            <UserMenu onOpenSessions={openSessionsTab} />
+          ) : (
+            <button
+              onClick={() => setShowLogin(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-game-accent hover:bg-game-accent/90 rounded text-xs font-medium transition-colors"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Sign In</span>
+            </button>
+          )}
+          
+          <div className="h-4 w-px bg-game-border mx-1" />
+          
           <button
             onClick={resetGame}
-            className="text-sm text-gray-400 hover:text-white transition-colors"
+            className="text-xs text-gray-400 hover:text-white transition-colors px-2 py-1.5 hover:bg-white/5 rounded"
           >
-            Exit Game
+            Exit
           </button>
         </div>
       </header>
@@ -134,8 +247,8 @@ export function GameInterface() {
         {/* Actors Sidebar */}
         <aside
           className={`
-            fixed lg:relative inset-y-0 left-0 z-40 lg:z-0
-            w-80 glass-card rounded-none border-y-0 border-l-0
+            fixed lg:relative top-12 lg:top-0 bottom-0 left-0 z-40 lg:z-0
+            w-72 glass-card rounded-none border-y-0 border-l-0
             transform transition-transform duration-300
             ${showSidebar ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             overflow-hidden flex flex-col
@@ -146,13 +259,10 @@ export function GameInterface() {
 
         {/* Main content */}
         <main className="flex-1 flex flex-col overflow-hidden">
-          {/* Goal Progress - Primary Metric */}
+          {/* Goal Progress & World State - Combined Panel */}
           {playerGoal && (
             <GoalProgress goal={playerGoal} currentTurn={currentTurn} />
           )}
-
-          {/* World State Panel */}
-          <WorldStatePanel />
 
           {/* Event display area */}
           <div className="flex-1 overflow-hidden">
@@ -164,8 +274,10 @@ export function GameInterface() {
         </main>
       </div>
 
-      {/* Summary Modal */}
+      {/* Modals */}
       <SummaryModal isOpen={showSummary} onClose={() => setShowSummary(false)} />
+      <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
+      <SessionManager isOpen={showSessions} onClose={() => setShowSessions(false)} initialTab={sessionInitialTab} />
     </div>
   );
 }

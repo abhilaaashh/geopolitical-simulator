@@ -10,7 +10,13 @@ import {
   Info,
   ChevronDown,
   ChevronUp,
+  Zap,
+  Globe,
+  AlertTriangle,
+  Minus,
 } from 'lucide-react';
+import { useGameStore } from '@/lib/store';
+import { getTensionColor } from '@/lib/utils';
 import type { PlayerGoal } from '@/lib/types';
 
 interface GoalProgressProps {
@@ -24,6 +30,7 @@ export function GoalProgress({
   currentTurn,
   className = '',
 }: GoalProgressProps) {
+  const { worldState } = useGameStore();
   const [prevProgress, setPrevProgress] = useState(goal.progress);
   const [showChange, setShowChange] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -32,6 +39,25 @@ export function GoalProgress({
   const progressLevel = goal.progress >= 75 ? 'excellent' : 
                         goal.progress >= 50 ? 'good' : 
                         goal.progress >= 25 ? 'fair' : 'poor';
+
+  // World state values
+  const tensionLevel = worldState.tensionLevel ?? 50;
+  const activeConflicts = worldState.activeConflicts || [];
+
+  const getTensionIcon = () => {
+    if (tensionLevel > 70) return <AlertTriangle className="w-3.5 h-3.5 text-red-400" />;
+    if (tensionLevel > 50) return <TrendingUp className="w-3.5 h-3.5 text-amber-400" />;
+    if (tensionLevel < 30) return <TrendingDown className="w-3.5 h-3.5 text-green-400" />;
+    return <Minus className="w-3.5 h-3.5 text-gray-400" />;
+  };
+
+  const getTensionLabel = () => {
+    if (tensionLevel > 80) return 'Critical';
+    if (tensionLevel > 60) return 'High';
+    if (tensionLevel > 40) return 'Elevated';
+    if (tensionLevel > 20) return 'Moderate';
+    return 'Low';
+  };
 
   useEffect(() => {
     if (goal.progress !== prevProgress) {
@@ -77,38 +103,52 @@ export function GoalProgress({
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`glass-card rounded-none border-x-0 border-t-0 px-6 py-2 ${className}`}
+      className={`glass-card rounded-none border-x-0 border-t-0 px-4 py-2 ${className}`}
     >
       {/* Compact header row - always visible */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between gap-4 group"
+        className="w-full flex items-center justify-between gap-3 group"
       >
         <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${colors.bg}`}>
-            <Target className={`w-4 h-4 ${colors.text}`} />
+          <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${colors.bg}`}>
+            <Target className={`w-3.5 h-3.5 ${colors.text}`} />
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">
-                Objective
-              </span>
-              {goal.type === 'custom' && (
-                <span className="text-[9px] font-medium px-1 py-0.5 bg-purple-500/20 text-purple-400 rounded border border-purple-500/30">
-                  CUSTOM
-                </span>
-              )}
-            </div>
-            <p className="text-gray-200 text-sm font-medium truncate">
-              {goal.description}
-            </p>
-          </div>
+          <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider flex-shrink-0">
+            Objective
+          </span>
+          {goal.type === 'custom' && (
+            <span className="text-[9px] font-medium px-1 py-0.5 bg-purple-500/20 text-purple-400 rounded border border-purple-500/30 flex-shrink-0">
+              CUSTOM
+            </span>
+          )}
+          <p className="text-gray-200 text-sm font-medium truncate min-w-0 flex-1">
+            {goal.description}
+          </p>
         </div>
 
-        {/* Progress + expand toggle */}
+        {/* Progress + world state summary + expand toggle */}
         <div className="flex items-center gap-3 flex-shrink-0">
+          {/* Quick world state indicators (collapsed view) */}
+          <div className="hidden md:flex items-center gap-3 text-xs">
+            <div className="flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-game-accent" />
+              <div className="w-16 h-1.5 bg-game-bg rounded-full overflow-hidden">
+                <div className={`h-full ${getTensionColor(tensionLevel)}`} style={{ width: `${tensionLevel}%` }} />
+              </div>
+            </div>
+            {activeConflicts.length > 0 && (
+              <span className="text-red-400 flex items-center gap-1">
+                <AlertTriangle className="w-3 h-3" />
+                {activeConflicts.length}
+              </span>
+            )}
+          </div>
+
+          <div className="h-4 w-px bg-game-border" />
+
           {/* Progress bar (compact) */}
-          <div className="hidden sm:block w-24 lg:w-32">
+          <div className="hidden sm:block w-20">
             <div className="relative h-1.5 bg-game-bg rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
@@ -120,12 +160,12 @@ export function GoalProgress({
           </div>
 
           {/* Progress percentage */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
             <motion.span
               key={goal.progress}
               initial={{ scale: 1.2, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className={`text-xl font-bold ${colors.text}`}
+              className={`text-lg font-bold ${colors.text}`}
             >
               {goal.progress}%
             </motion.span>
@@ -173,34 +213,98 @@ export function GoalProgress({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="pt-3 space-y-2">
-              {/* Full progress bar with milestones */}
-              <div className="relative h-2 bg-game-bg rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${goal.progress}%` }}
-                  transition={{ duration: 0.8, ease: 'easeOut' }}
-                  className={`h-full rounded-full ${colors.bar}`}
-                />
-                {/* Milestone markers */}
-                <div className="absolute inset-0 flex items-center">
-                  {[25, 50, 75].map((milestone) => (
-                    <div
-                      key={milestone}
-                      className="absolute h-full w-px bg-game-border"
-                      style={{ left: `${milestone}%` }}
+            <div className="pt-3 space-y-3">
+              {/* World State Section */}
+              <div className="flex flex-wrap items-center gap-4 p-2.5 bg-game-bg/50 rounded-lg">
+                {/* Tension Level */}
+                <div className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-game-accent" />
+                  <span className="text-xs text-gray-400">Tension</span>
+                  <div className="w-24 h-1.5 bg-game-bg rounded-full overflow-hidden">
+                    <motion.div
+                      className={`h-full ${getTensionColor(tensionLevel)} transition-all`}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${tensionLevel}%` }}
+                      transition={{ duration: 0.5 }}
                     />
-                  ))}
+                  </div>
+                  <span className="text-xs font-medium flex items-center gap-1">
+                    {getTensionIcon()}
+                    {getTensionLabel()}
+                  </span>
                 </div>
+
+                <div className="h-4 w-px bg-game-border hidden sm:block" />
+
+                {/* Global Sentiment */}
+                <div className="flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-blue-400" />
+                  <span className="text-xs text-gray-400">Sentiment:</span>
+                  <span className="text-xs font-medium">
+                    {typeof worldState.globalSentiment === 'string' ? worldState.globalSentiment : 'Neutral'}
+                  </span>
+                </div>
+
+                <div className="h-4 w-px bg-game-border hidden sm:block" />
+
+                {/* Diplomatic Status */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-400">Diplomacy:</span>
+                  <span className="text-xs font-medium">
+                    {typeof worldState.diplomaticStatus === 'string' ? worldState.diplomaticStatus : 'Stable'}
+                  </span>
+                </div>
+
+                {/* Active Conflicts */}
+                {activeConflicts.length > 0 && (
+                  <>
+                    <div className="h-4 w-px bg-game-border hidden sm:block" />
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 text-red-400" />
+                      <span className="text-xs text-gray-400">Active:</span>
+                      <span className="text-xs text-red-400 font-medium">
+                        {activeConflicts.length} conflict{activeConflicts.length > 1 ? 's' : ''}
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
 
-              <div className="flex items-center justify-between text-[10px] text-gray-500">
-                <span>Turn {currentTurn}</span>
-                <div className="flex gap-4">
-                  <span>25%</span>
-                  <span>50%</span>
-                  <span>75%</span>
-                  <span>100%</span>
+              {/* Goal Progress Details */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase tracking-wider">
+                  <Target className="w-3 h-3" />
+                  Goal Progress
+                </div>
+                
+                {/* Full progress bar with milestones */}
+                <div className="relative h-2 bg-game-bg rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${goal.progress}%` }}
+                    transition={{ duration: 0.8, ease: 'easeOut' }}
+                    className={`h-full rounded-full ${colors.bar}`}
+                  />
+                  {/* Milestone markers */}
+                  <div className="absolute inset-0 flex items-center">
+                    {[25, 50, 75].map((milestone) => (
+                      <div
+                        key={milestone}
+                        className="absolute h-full w-px bg-game-border"
+                        style={{ left: `${milestone}%` }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-[10px] text-gray-500">
+                  <span>Turn {currentTurn}</span>
+                  <div className="flex gap-4">
+                    <span>25%</span>
+                    <span>50%</span>
+                    <span>75%</span>
+                    <span>100%</span>
+                  </div>
                 </div>
               </div>
 

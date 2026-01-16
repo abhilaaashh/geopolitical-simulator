@@ -18,6 +18,21 @@ interface SummaryRequest {
   gameState: GameState;
 }
 
+// Structured summary response type
+export interface BulletinSummary {
+  headline: string;
+  subheadline: string;
+  stats: {
+    turns: number;
+    tensionStart: number;
+    tensionEnd: number;
+    tensionDelta: string;
+    outcome: string;
+  };
+  highlights: string[];
+  verdict: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body: SummaryRequest = await request.json();
@@ -62,6 +77,10 @@ export async function POST(request: NextRequest) {
     const tensionLevel = worldState?.tensionLevel ?? 50;
     const globalSentiment = worldState?.globalSentiment || 'Neutral';
     const diplomaticStatus = worldState?.diplomaticStatus || 'Stable';
+    
+    // Estimate starting tension from first event's world state changes, or use a default
+    // We'll use 50 as a reasonable baseline if we don't have historical data
+    const startingTension = 50;
 
     // Replace template variables
     systemPrompt = systemPrompt
@@ -72,6 +91,7 @@ export async function POST(request: NextRequest) {
       .replace('{{PLAYER_TYPE}}', playerActor?.type || 'unknown')
       .replace('{{PLAYER_OBJECTIVES}}', playerActor?.objectives?.join(', ') || 'Unknown objectives')
       .replace('{{TOTAL_TURNS}}', String(currentTurn || 1))
+      .replace('{{STARTING_TENSION}}', String(startingTension))
       .replace('{{TENSION_LEVEL}}', String(tensionLevel))
       .replace('{{GLOBAL_SENTIMENT}}', globalSentiment)
       .replace('{{DIPLOMATIC_STATUS}}', diplomaticStatus)
@@ -85,7 +105,56 @@ export async function POST(request: NextRequest) {
       throw new Error('No content in response');
     }
 
-    return NextResponse.json({ summary: content.trim() });
+    // Parse the JSON response from the AI
+    let bulletin: BulletinSummary;
+    try {
+      // Clean up potential markdown code blocks
+      let cleanedContent = content.trim();
+      if (cleanedContent.startsWith('```json')) {
+        cleanedContent = cleanedContent.slice(7);
+      } else if (cleanedContent.startsWith('```')) {
+        cleanedContent = cleanedContent.slice(3);
+      }
+      if (cleanedContent.endsWith('```')) {
+        cleanedContent = cleanedContent.slice(0, -3);
+      }
+      cleanedContent = cleanedContent.trim();
+      
+      bulletin = JSON.parse(cleanedContent);
+      
+      // Validate required fields
+      if (!bulletin.headline || !bulletin.highlights || !bulletin.verdict) {
+        throw new Error('Missing required fields in bulletin');
+      }
+      
+      // Ensure highlights is an array with at least one item
+      if (!Array.isArray(bulletin.highlights) || bulletin.highlights.length === 0) {
+        throw new Error('Highlights must be a non-empty array');
+      }
+      
+    } catch (parseError) {
+      console.error('Failed to parse bulletin JSON:', parseError, 'Content:', content);
+      // Fallback: create a basic bulletin from the raw content
+      bulletin = {
+        headline: scenario.title?.toUpperCase() || 'SIMULATION COMPLETE',
+        subheadline: 'A geopolitical simulation just concluded',
+        stats: {
+          turns: currentTurn || 1,
+          tensionStart: startingTension,
+          tensionEnd: tensionLevel,
+          tensionDelta: tensionLevel >= startingTension ? `+${tensionLevel - startingTension}` : `${tensionLevel - startingTension}`,
+          outcome: diplomaticStatus
+        },
+        highlights: [
+          `${playerActor?.name || 'Player'} navigated ${currentTurn} turns of complex diplomacy`,
+          `Tension levels shifted from ${startingTension}% to ${tensionLevel}%`,
+          `Global sentiment: ${globalSentiment}`,
+        ],
+        verdict: 'The simulation has concluded. The world watches what happens next.'
+      };
+    }
+
+    return NextResponse.json({ summary: bulletin });
   } catch (error) {
     console.error('Summary generation error:', error);
     return NextResponse.json(

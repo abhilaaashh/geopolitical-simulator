@@ -36,7 +36,13 @@ const initialState: GameState = {
   selectedActionType: undefined,
 };
 
-interface GameStore extends GameState {
+interface CloudSyncState {
+  cloudSessionId: string | null;
+  lastSyncedAt: Date | null;
+  isDirty: boolean; // Has changes since last sync
+}
+
+interface GameStore extends GameState, CloudSyncState {
   // Setup actions
   setScenario: (scenario: Scenario) => void;
   selectCharacter: (actorId: string) => void;
@@ -55,16 +61,29 @@ interface GameStore extends GameState {
   nextTurn: () => void;
   setProcessing: (isProcessing: boolean) => void;
   
+  // Cloud sync actions
+  setCloudSession: (sessionId: string | null) => void;
+  markSynced: () => void;
+  loadFromCloud: (state: GameState, sessionId: string) => void;
+  getGameState: () => GameState;
+  
   // Reset
   resetGame: () => void;
   resetToSetup: () => void;
   resetToMilestone: () => void;
 }
 
+const initialCloudState: CloudSyncState = {
+  cloudSessionId: null,
+  lastSyncedAt: null,
+  isDirty: false,
+};
+
 export const useGameStore = create<GameStore>()(
   persist(
     (set, get) => ({
       ...initialState,
+      ...initialCloudState,
 
       setScenario: (scenario) => set({ 
         scenario, 
@@ -73,7 +92,8 @@ export const useGameStore = create<GameStore>()(
           ...initialWorldState,
           tensionLevel: 60,
           activeConflicts: [scenario.title],
-        }
+        },
+        isDirty: true,
       }),
 
       selectCharacter: (actorId) => {
@@ -89,15 +109,17 @@ export const useGameStore = create<GameStore>()(
           playerActorId: actorId,
           scenario: { ...scenario, actors: updatedActors },
           phase: 'milestone-select',
+          isDirty: true,
         });
       },
 
       selectMilestone: (milestoneId) => set({ 
         startingMilestoneId: milestoneId,
         phase: 'goal-select',
+        isDirty: true,
       }),
 
-      setPlayerGoal: (goal) => set({ playerGoal: goal }),
+      setPlayerGoal: (goal) => set({ playerGoal: goal, isDirty: true }),
 
       setViewMode: (mode) => set({ viewMode: mode }),
 
@@ -131,19 +153,23 @@ export const useGameStore = create<GameStore>()(
           phase: 'playing',
           currentTurn: 1,
           events: [initialEvent],
+          isDirty: true,
         });
       },
 
       addEvent: (event) => set((state) => ({ 
-        events: [...state.events, event] 
+        events: [...state.events, event],
+        isDirty: true,
       })),
 
       addEvents: (events) => set((state) => ({ 
-        events: [...state.events, ...events] 
+        events: [...state.events, ...events],
+        isDirty: true,
       })),
 
       updateWorldState: (update) => set((state) => ({
-        worldState: { ...state.worldState, ...update }
+        worldState: { ...state.worldState, ...update },
+        isDirty: true,
       })),
 
       updateGoalProgress: (progress, evaluation, turn) => set((state) => ({
@@ -155,6 +181,7 @@ export const useGameStore = create<GameStore>()(
               evaluatedAt: turn,
             }
           : null,
+        isDirty: true,
       })),
 
       updateActor: (actorId, update) => set((state) => {
@@ -165,26 +192,69 @@ export const useGameStore = create<GameStore>()(
         );
         
         return {
-          scenario: { ...state.scenario, actors: updatedActors }
+          scenario: { ...state.scenario, actors: updatedActors },
+          isDirty: true,
         };
       }),
 
       nextTurn: () => set((state) => ({ 
-        currentTurn: state.currentTurn + 1 
+        currentTurn: state.currentTurn + 1,
+        isDirty: true,
       })),
 
       setProcessing: (isProcessing) => set({ isProcessing }),
 
-      resetGame: () => set(initialState),
+      // Cloud sync actions
+      setCloudSession: (sessionId) => set({ cloudSessionId: sessionId }),
+      
+      markSynced: () => set({ 
+        lastSyncedAt: new Date(), 
+        isDirty: false,
+      }),
+      
+      loadFromCloud: (state, sessionId) => {
+        set({
+          ...state,
+          cloudSessionId: sessionId,
+          lastSyncedAt: new Date(),
+          isDirty: false,
+          isProcessing: false,
+        });
+      },
+      
+      getGameState: () => {
+        const state = get();
+        return {
+          scenario: state.scenario,
+          playerId: state.playerId,
+          playerActorId: state.playerActorId,
+          startingMilestoneId: state.startingMilestoneId,
+          playerGoal: state.playerGoal,
+          currentTurn: state.currentTurn,
+          events: state.events,
+          worldState: state.worldState,
+          phase: state.phase,
+          viewMode: state.viewMode,
+          isProcessing: state.isProcessing,
+          selectedActionType: state.selectedActionType,
+        };
+      },
+
+      resetGame: () => set({ 
+        ...initialState, 
+        ...initialCloudState,
+      }),
 
       resetToSetup: () => set({
         ...initialState,
+        ...initialCloudState,
         scenario: get().scenario,
         phase: 'character-select',
       }),
 
       resetToMilestone: () => set({
         ...initialState,
+        ...initialCloudState,
         scenario: get().scenario,
         playerActorId: get().playerActorId,
         phase: 'milestone-select',
@@ -202,6 +272,7 @@ export const useGameStore = create<GameStore>()(
         currentTurn: state.currentTurn,
         phase: state.phase,
         viewMode: state.viewMode,
+        cloudSessionId: state.cloudSessionId,
       }),
     }
   )
