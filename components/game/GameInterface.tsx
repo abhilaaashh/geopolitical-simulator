@@ -12,6 +12,7 @@ import { GoalProgress, GoalProgressCompact } from './GoalProgress';
 import { SessionManager } from './SessionManager';
 import { LoginModal } from '@/components/auth/LoginModal';
 import { UserMenu } from '@/components/auth/UserMenu';
+import { AnalyticsModal } from '@/components/analytics';
 import { Menu, X, Users, ScrollText, Save, History, LogIn } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,6 +25,7 @@ export function GameInterface() {
   const [showSummary, setShowSummary] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showSessions, setShowSessions] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
   const [sessionInitialTab, setSessionInitialTab] = useState<'sessions' | 'save'>('sessions');
 
   const openSaveTab = () => {
@@ -36,7 +38,8 @@ export function GameInterface() {
     setShowSessions(true);
   };
 
-  if (!scenario) return null;
+  // Return empty div instead of null to allow AnimatePresence exit animations to complete
+  if (!scenario) return <div className="h-screen" />;
 
   // Social view has its own full-screen layout
   if (viewMode === 'social') {
@@ -99,7 +102,7 @@ export function GameInterface() {
             {isLoading ? (
               <div className="w-7 h-7 rounded-full bg-white/10 animate-pulse" />
             ) : user ? (
-              <UserMenu onOpenSessions={openSessionsTab} />
+              <UserMenu onOpenSessions={openSessionsTab} onOpenAnalytics={() => setShowAnalytics(true)} />
             ) : (
               <button
                 onClick={() => setShowLogin(true)}
@@ -142,6 +145,7 @@ export function GameInterface() {
         <SummaryModal isOpen={showSummary} onClose={() => setShowSummary(false)} />
         <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
         <SessionManager isOpen={showSessions} onClose={() => setShowSessions(false)} initialTab={sessionInitialTab} />
+        <AnalyticsModal isOpen={showAnalytics} onClose={() => setShowAnalytics(false)} />
       </div>
     );
   }
@@ -208,7 +212,7 @@ export function GameInterface() {
           {isLoading ? (
             <div className="w-7 h-7 rounded-full bg-white/10 animate-pulse" />
           ) : user ? (
-            <UserMenu onOpenSessions={openSessionsTab} />
+            <UserMenu onOpenSessions={openSessionsTab} onOpenAnalytics={() => setShowAnalytics(true)} />
           ) : (
             <button
               onClick={() => setShowLogin(true)}
@@ -278,6 +282,7 @@ export function GameInterface() {
       <SummaryModal isOpen={showSummary} onClose={() => setShowSummary(false)} />
       <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
       <SessionManager isOpen={showSessions} onClose={() => setShowSessions(false)} initialTab={sessionInitialTab} />
+      <AnalyticsModal isOpen={showAnalytics} onClose={() => setShowAnalytics(false)} />
     </div>
   );
 }

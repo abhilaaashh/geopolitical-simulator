@@ -100,6 +100,17 @@ export type Database = {
           created_at: string;
         }[];
       };
+      get_analytics_stats: {
+        Args: Record<string, never>;
+        Returns: {
+          total_users: number;
+          total_sessions: number;
+          completed_sessions: number;
+          avg_session_duration_seconds: number;
+          avg_turns_per_game: number;
+          completion_rate: number;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;
@@ -124,3 +135,6 @@ export type SharedSessionRow = Database['public']['Tables']['shared_sessions']['
 export type SharedSessionInsert = Database['public']['Tables']['shared_sessions']['Insert'];
 
 export interface SharedSession extends SharedSessionRow {}
+
+// Analytics types
+export type AnalyticsStats = Database['public']['Functions']['get_analytics_stats']['Returns'][number];

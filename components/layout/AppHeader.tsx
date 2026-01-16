@@ -7,12 +7,14 @@ import { useGameStore } from '@/lib/store';
 import { LoginModal } from '@/components/auth/LoginModal';
 import { UserMenu } from '@/components/auth/UserMenu';
 import { SessionManager } from '@/components/game/SessionManager';
+import { AnalyticsModal } from '@/components/analytics';
 
 export function AppHeader() {
   const { user, isLoading } = useAuth();
   const { phase, scenario } = useGameStore();
   const [showLogin, setShowLogin] = useState(false);
   const [showSessions, setShowSessions] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
   const [sessionInitialTab, setSessionInitialTab] = useState<'sessions' | 'save'>('sessions');
 
   const canSave = phase === 'playing' && scenario && user;
@@ -71,7 +73,7 @@ export function AppHeader() {
               {isLoading ? (
                 <div className="w-10 h-10 rounded-full bg-white/10 animate-pulse" />
               ) : user ? (
-                <UserMenu onOpenSessions={openSessionsTab} />
+                <UserMenu onOpenSessions={openSessionsTab} onOpenAnalytics={() => setShowAnalytics(true)} />
               ) : (
                 <button
                   onClick={() => setShowLogin(true)}
@@ -89,6 +91,7 @@ export function AppHeader() {
       {/* Modals */}
       <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
       <SessionManager isOpen={showSessions} onClose={() => setShowSessions(false)} initialTab={sessionInitialTab} />
+      <AnalyticsModal isOpen={showAnalytics} onClose={() => setShowAnalytics(false)} />
     </>
   );
 }

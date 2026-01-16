@@ -146,3 +146,63 @@ CREATE TRIGGER update_game_sessions_updated_at
   BEFORE UPDATE ON game_sessions
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================
+-- FUNCTION: Get analytics stats
+-- Returns aggregate statistics for the platform
+-- ============================================
+CREATE OR REPLACE FUNCTION get_analytics_stats()
+RETURNS TABLE (
+  total_users BIGINT,
+  total_sessions BIGINT,
+  completed_sessions BIGINT,
+  avg_session_duration_seconds NUMERIC,
+  avg_turns_per_game NUMERIC,
+  completion_rate NUMERIC
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_total_users BIGINT;
+  v_total_sessions BIGINT;
+  v_completed_sessions BIGINT;
+  v_avg_duration NUMERIC;
+  v_avg_turns NUMERIC;
+  v_completion_rate NUMERIC;
+BEGIN
+  -- Count total users from auth.users
+  SELECT COUNT(*) INTO v_total_users FROM auth.users;
+  
+  -- Count total sessions
+  SELECT COUNT(*) INTO v_total_sessions FROM game_sessions;
+  
+  -- Count completed sessions
+  SELECT COUNT(*) INTO v_completed_sessions 
+  FROM game_sessions WHERE is_completed = true;
+  
+  -- Calculate average session duration in seconds
+  SELECT COALESCE(
+    AVG(EXTRACT(EPOCH FROM (updated_at - created_at))),
+    0
+  ) INTO v_avg_duration FROM game_sessions;
+  
+  -- Calculate average turns per game
+  SELECT COALESCE(AVG(current_turn), 0) INTO v_avg_turns FROM game_sessions;
+  
+  -- Calculate completion rate as percentage
+  IF v_total_sessions > 0 THEN
+    v_completion_rate := ROUND((v_completed_sessions::NUMERIC / v_total_sessions) * 100, 1);
+  ELSE
+    v_completion_rate := 0;
+  END IF;
+  
+  RETURN QUERY SELECT 
+    v_total_users,
+    v_total_sessions,
+    v_completed_sessions,
+    ROUND(v_avg_duration, 0),
+    ROUND(v_avg_turns, 1),
+    v_completion_rate;
+END;
+$$;
