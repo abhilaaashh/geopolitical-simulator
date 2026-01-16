@@ -54,10 +54,10 @@ function SocialEventCard({ event, actorColor }: { event: GameEvent; actorColor?:
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mx-4 my-4"
+        className="mx-2 sm:mx-4 my-2 sm:my-4"
       >
-        <div className="text-center py-4 border-y border-gray-800">
-          <p className="text-gray-400 text-sm">{event.content}</p>
+        <div className="text-center py-3 sm:py-4 border-y border-gray-800">
+          <p className="text-gray-400 text-xs sm:text-sm">{event.content}</p>
         </div>
       </motion.div>
     );
@@ -76,7 +76,7 @@ function SocialEventCard({ event, actorColor }: { event: GameEvent; actorColor?:
       // Only show as article card for long-form content, otherwise convert to tweet style
       if (event.media?.headline && event.content.length > 200) {
         return (
-          <div className="border-b border-gray-800 p-4">
+          <div className="border-b border-gray-800 p-2 sm:p-4">
             <NewsArticleCard event={event} actorColor={actorColor} />
           </div>
         );
@@ -92,7 +92,7 @@ function SocialEventCard({ event, actorColor }: { event: GameEvent; actorColor?:
     case 'leak':
       // TV broadcasts and leaks as article cards (they have visual elements)
       return (
-        <div className="border-b border-gray-800 p-4">
+        <div className="border-b border-gray-800 p-2 sm:p-4">
           <NewsArticleCard event={event} actorColor={actorColor} />
         </div>
       );
@@ -102,7 +102,7 @@ function SocialEventCard({ event, actorColor }: { event: GameEvent; actorColor?:
     case 'speech':
       // Official statements keep their formal styling
       return (
-        <div className="border-b border-gray-800 p-4">
+        <div className="border-b border-gray-800 p-2 sm:p-4">
           <PressReleaseCard event={event} actorColor={actorColor} />
         </div>
       );
@@ -136,7 +136,7 @@ export function SocialView() {
 
   return (
     <div className="h-full flex bg-black">
-      {/* Left Sidebar - Navigation */}
+      {/* Left Sidebar - Navigation (hidden on mobile and tablet) */}
       <div className="hidden lg:flex flex-col w-64 border-r border-gray-800 p-2">
         <div className="p-4">
           <span className="text-2xl font-bold">𝕏</span>
@@ -160,12 +160,12 @@ export function SocialView() {
         )}
       </div>
 
-      {/* Main Feed */}
-      <div className="flex-1 flex flex-col min-w-0 border-r border-gray-800">
+      {/* Main Feed - full width on mobile */}
+      <div className="flex-1 flex flex-col min-w-0 xl:border-r border-gray-800">
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-black/80 backdrop-blur-md border-b border-gray-800 px-4 py-3">
-          <h1 className="text-xl font-bold">For You</h1>
-          <p className="text-xs text-gray-500">{scenario?.title}</p>
+        <div className="sticky top-0 z-10 bg-black/80 backdrop-blur-md border-b border-gray-800 px-3 sm:px-4 py-2 sm:py-3">
+          <h1 className="text-lg sm:text-xl font-bold">For You</h1>
+          <p className="text-[10px] sm:text-xs text-gray-500 truncate">{scenario?.title}</p>
         </div>
 
         {/* Feed */}
@@ -183,14 +183,14 @@ export function SocialView() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="p-4 border-b border-gray-800"
+              className="p-3 sm:p-4 border-b border-gray-800"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center">
-                  <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-800 flex items-center justify-center">
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Loading new posts...</p>
+                  <p className="text-gray-400 text-xs sm:text-sm">Loading new posts...</p>
                 </div>
               </div>
             </motion.div>
@@ -198,7 +198,7 @@ export function SocialView() {
         </div>
       </div>
 
-      {/* Right Sidebar - Trending */}
+      {/* Right Sidebar - Trending (hidden on mobile/tablet) */}
       <div className="hidden xl:block w-80 p-4">
         {/* Search */}
         <div className="relative mb-4">

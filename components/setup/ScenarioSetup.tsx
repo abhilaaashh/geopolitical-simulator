@@ -56,28 +56,28 @@ function PresetCard({
       whileTap={{ scale: 0.98 }}
       onClick={onSelect}
       disabled={isLoading}
-      className="glass-card-hover p-6 text-left w-full group"
+      className="glass-card-hover p-4 sm:p-6 text-left w-full group"
     >
-      <div className="flex items-start gap-4">
-        <div className="text-4xl">{preset.thumbnail}</div>
+      <div className="flex items-start gap-3 sm:gap-4">
+        <div className="text-2xl sm:text-4xl">{preset.thumbnail}</div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-bold text-lg truncate">{preset.title}</h3>
-            <Star className="w-4 h-4 text-yellow-500 flex-shrink-0" />
+            <h3 className="font-bold text-sm sm:text-lg truncate">{preset.title}</h3>
+            <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500 flex-shrink-0" />
           </div>
-          <p className="text-sm text-gray-400 mb-3 line-clamp-2">
+          <p className="text-xs sm:text-sm text-gray-400 mb-2 sm:mb-3 line-clamp-2">
             {preset.description}
           </p>
-          <div className="flex items-center gap-4 text-xs text-gray-500">
+          <div className="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-xs text-gray-500">
             <span className="flex items-center gap-1">
               <Users className="w-3 h-3" />
               {preset.actors.length} actors
             </span>
-            <span>{preset.region}</span>
+            <span className="hidden xs:inline">{preset.region}</span>
           </div>
           
-          {/* Actor previews */}
-          <div className="flex items-center gap-2 mt-3">
+          {/* Actor previews - hidden on very small screens */}
+          <div className="hidden sm:flex items-center gap-2 mt-3">
             {preset.actors.slice(0, 4).map((actor) => (
               <div
                 key={actor.id}
@@ -96,9 +96,9 @@ function PresetCard({
             )}
           </div>
         </div>
-        <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="w-10 h-10 bg-game-accent rounded-full flex items-center justify-center">
-            <Play className="w-5 h-5 text-white ml-0.5" />
+        <div className="flex-shrink-0 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-game-accent rounded-full flex items-center justify-center">
+            <Play className="w-4 h-4 sm:w-5 sm:h-5 text-white ml-0.5" />
           </div>
         </div>
       </div>
@@ -211,21 +211,21 @@ export function ScenarioSetup() {
   };
 
   return (
-    <div className="min-h-screen p-8 overflow-y-auto">
+    <div className="min-h-screen p-4 sm:p-8 overflow-y-auto">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center mb-8 sm:mb-12"
         >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Globe className="w-12 h-12 text-game-accent" />
-            <h1 className="text-5xl font-bold text-gradient">
+          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <Globe className="w-8 h-8 sm:w-12 sm:h-12 text-game-accent" />
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gradient">
               The Situation Room
             </h1>
           </div>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-lg lg:text-xl text-gray-400 max-w-2xl mx-auto px-2">
             Step into the room where history is made. Choose a real-world scenario,
             assume your role, and shape the outcome through strategic decisions.
           </p>
@@ -236,14 +236,14 @@ export function ScenarioSetup() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-12"
+          className="mb-8 sm:mb-12"
         >
-          <div className="flex items-center gap-2 mb-6">
-            <Star className="w-5 h-5 text-yellow-500" />
-            <h2 className="text-2xl font-bold">Featured Scenarios</h2>
+          <div className="flex items-center gap-2 mb-4 sm:mb-6">
+            <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />
+            <h2 className="text-lg sm:text-2xl font-bold">Featured Scenarios</h2>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {(presets.presets as PresetScenario[]).map((preset, index) => (
               <motion.div
                 key={preset.id}
@@ -268,41 +268,41 @@ export function ScenarioSetup() {
           transition={{ delay: 0.3 }}
           className="max-w-2xl mx-auto"
         >
-          <div className="glass-card p-8">
-            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-game-accent" />
+          <div className="glass-card p-4 sm:p-8">
+            <h2 className="text-base sm:text-xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-game-accent" />
               Create Custom Scenario
             </h2>
 
             {/* Tab Toggle */}
-            <div className="flex mb-6 bg-game-bg rounded-xl p-1">
+            <div className="flex mb-4 sm:mb-6 bg-game-bg rounded-xl p-1">
               <button
                 onClick={() => {
                   setInputMode('query');
                   setError(null);
                 }}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
+                className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-3 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                   inputMode === 'query'
                     ? 'bg-game-accent text-white shadow-lg'
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
-                <Search className="w-4 h-4" />
-                Text Query
+                <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden xs:inline">Text</span> Query
               </button>
               <button
                 onClick={() => {
                   setInputMode('url');
                   setError(null);
                 }}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
+                className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-3 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                   inputMode === 'url'
                     ? 'bg-game-accent text-white shadow-lg'
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
-                <Link2 className="w-4 h-4" />
-                Import from URL
+                <Link2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden xs:inline">Import from</span> URL
               </button>
             </div>
 
@@ -311,7 +311,7 @@ export function ScenarioSetup() {
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="relative mb-6"
+                className="relative mb-4 sm:mb-6"
               >
                 <input
                   type="text"
@@ -319,10 +319,10 @@ export function ScenarioSetup() {
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleDiscover(query)}
                   placeholder="Describe any current affairs scenario..."
-                  className="input-field pl-12 pr-4"
+                  className="input-field pl-10 sm:pl-12 pr-4 text-sm sm:text-base"
                   disabled={isLoading}
                 />
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
               </motion.div>
             )}
 
@@ -331,7 +331,7 @@ export function ScenarioSetup() {
               <motion.div
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="mb-6"
+                className="mb-4 sm:mb-6"
               >
                 <div className="relative">
                   <input
@@ -340,14 +340,14 @@ export function ScenarioSetup() {
                     onChange={(e) => setUrlInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleDiscover()}
                     placeholder="Paste a tweet or news article URL..."
-                    className="input-field pl-12 pr-4"
+                    className="input-field pl-10 sm:pl-12 pr-4 text-sm sm:text-base"
                     disabled={isLoading}
                   />
-                  <Link2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Link2 className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
                 </div>
-                <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3" />
-                  Works with tweets, news articles, blog posts, and most web pages
+                <p className="mt-2 text-[10px] sm:text-xs text-gray-500 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3 flex-shrink-0" />
+                  <span>Works with tweets, news articles, blog posts, and most web pages</span>
                 </p>
               </motion.div>
             )}
@@ -355,17 +355,19 @@ export function ScenarioSetup() {
             <button
               onClick={() => handleDiscover()}
               disabled={isLoading || (inputMode === 'query' ? !query.trim() : !urlInput.trim())}
-              className="btn-primary w-full flex items-center justify-center gap-2"
+              className="btn-primary w-full flex items-center justify-center gap-2 text-sm sm:text-base py-2.5 sm:py-3"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  {inputMode === 'url' ? 'Extracting content & analyzing...' : 'Analyzing scenario with AI...'}
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                  <span className="hidden sm:inline">{inputMode === 'url' ? 'Extracting content & analyzing...' : 'Analyzing scenario with AI...'}</span>
+                  <span className="sm:hidden">Analyzing...</span>
                 </>
               ) : (
                 <>
-                  {inputMode === 'url' ? <Link2 className="w-5 h-5" /> : <Search className="w-5 h-5" />}
-                  {inputMode === 'url' ? 'Import & Build Scenario' : 'Discover & Build Scenario'}
+                  {inputMode === 'url' ? <Link2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <Search className="w-4 h-4 sm:w-5 sm:h-5" />}
+                  <span className="hidden sm:inline">{inputMode === 'url' ? 'Import & Build Scenario' : 'Discover & Build Scenario'}</span>
+                  <span className="sm:hidden">{inputMode === 'url' ? 'Import' : 'Discover'}</span>
                 </>
               )}
             </button>
@@ -374,7 +376,7 @@ export function ScenarioSetup() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm"
+                className="mt-4 p-3 sm:p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs sm:text-sm"
               >
                 {error}
               </motion.div>
@@ -383,8 +385,8 @@ export function ScenarioSetup() {
 
           {/* Quick suggestions - only show for query mode */}
           {inputMode === 'query' && (
-            <div className="mt-6">
-              <p className="text-sm text-gray-500 mb-4 text-center">
+            <div className="mt-4 sm:mt-6">
+              <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4 text-center">
                 Quick suggestions:
               </p>
               <div className="flex flex-wrap gap-2 justify-center">
@@ -396,10 +398,11 @@ export function ScenarioSetup() {
                       handleDiscover(scenario.query);
                     }}
                     disabled={isLoading}
-                    className="btn-secondary text-sm flex items-center gap-2 hover:scale-105 transition-transform"
+                    className="btn-secondary text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 hover:scale-105 transition-transform py-2 px-3"
                   >
                     <span>{scenario.icon}</span>
-                    {scenario.query}
+                    <span className="hidden xs:inline">{scenario.query}</span>
+                    <span className="xs:hidden">{scenario.query.split(' ')[0]}</span>
                   </button>
                 ))}
               </div>
@@ -408,17 +411,17 @@ export function ScenarioSetup() {
 
           {/* Example URLs - only show for URL mode */}
           {inputMode === 'url' && (
-            <div className="mt-6">
-              <p className="text-sm text-gray-500 mb-4 text-center">
+            <div className="mt-4 sm:mt-6">
+              <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4 text-center">
                 Supported sources:
               </p>
               <div className="flex flex-wrap gap-2 justify-center">
-                <span className="btn-secondary text-sm opacity-60 cursor-default">Twitter/X</span>
-                <span className="btn-secondary text-sm opacity-60 cursor-default">Reuters</span>
-                <span className="btn-secondary text-sm opacity-60 cursor-default">BBC</span>
-                <span className="btn-secondary text-sm opacity-60 cursor-default">CNN</span>
-                <span className="btn-secondary text-sm opacity-60 cursor-default">NYT</span>
-                <span className="btn-secondary text-sm opacity-60 cursor-default">+ any URL</span>
+                <span className="btn-secondary text-xs sm:text-sm opacity-60 cursor-default py-1.5 px-2.5">Twitter/X</span>
+                <span className="btn-secondary text-xs sm:text-sm opacity-60 cursor-default py-1.5 px-2.5">Reuters</span>
+                <span className="btn-secondary text-xs sm:text-sm opacity-60 cursor-default py-1.5 px-2.5">BBC</span>
+                <span className="btn-secondary text-xs sm:text-sm opacity-60 cursor-default py-1.5 px-2.5 hidden xs:inline-block">CNN</span>
+                <span className="btn-secondary text-xs sm:text-sm opacity-60 cursor-default py-1.5 px-2.5 hidden xs:inline-block">NYT</span>
+                <span className="btn-secondary text-xs sm:text-sm opacity-60 cursor-default py-1.5 px-2.5">+ any URL</span>
               </div>
             </div>
           )}
@@ -428,7 +431,7 @@ export function ScenarioSetup() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="mt-16 text-center text-gray-600 text-sm"
+          className="mt-8 sm:mt-16 text-center text-gray-600 text-xs sm:text-sm"
         >
           <p>Powered by LLMs • Real-time scenario analysis • Unlimited possibilities</p>
         </motion.div>

@@ -51,13 +51,13 @@ function DefaultEventCard({ event, actorColor }: { event: GameEvent; actorColor?
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.3 }}
-      className={`glass-card p-5 ${isPlayer ? 'border-game-accent/50' : ''}`}
+      className={`glass-card p-3 sm:p-5 ${isPlayer ? 'border-game-accent/50' : ''}`}
     >
       {/* Header */}
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div className="flex items-center gap-3">
+      <div className="flex items-start justify-between gap-2 sm:gap-3 mb-2 sm:mb-3">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0"
             style={{ 
               backgroundColor: isSystem 
                 ? 'rgba(99, 102, 241, 0.2)' 
@@ -65,22 +65,22 @@ function DefaultEventCard({ event, actorColor }: { event: GameEvent; actorColor?
             }}
           >
             {isSystem ? (
-              <Globe className="w-5 h-5 text-game-accent" />
+              <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-game-accent" />
             ) : (
-              <User className="w-5 h-5" style={{ color: actorColor }} />
+              <User className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: actorColor }} />
             )}
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h4 className="font-semibold">{actorName}</h4>
+              <h4 className="font-semibold text-sm sm:text-base truncate">{actorName}</h4>
               {isPlayer && (
-                <span className="badge-info text-xs">You</span>
+                <span className="badge-info text-[10px] sm:text-xs flex-shrink-0">You</span>
               )}
             </div>
-            <div className="flex items-center gap-2 text-xs text-gray-500">
+            <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-gray-500">
               <span className="flex items-center gap-1">
-                {TYPE_ICONS[eventType as keyof typeof TYPE_ICONS] || <Zap className="w-4 h-4" />}
-                <span className="capitalize">{eventType}</span>
+                {TYPE_ICONS[eventType as keyof typeof TYPE_ICONS] || <Zap className="w-3 h-3 sm:w-4 sm:h-4" />}
+                <span className="capitalize hidden xs:inline">{eventType}</span>
               </span>
               <span>•</span>
               <span>Turn {event.turn ?? 1}</span>
@@ -88,20 +88,20 @@ function DefaultEventCard({ event, actorColor }: { event: GameEvent; actorColor?
           </div>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
           {event.sentiment && SENTIMENT_ICONS[event.sentiment as keyof typeof SENTIMENT_ICONS]}
-          <span className="text-xs text-gray-500">{formatTime(event.timestamp)}</span>
+          <span className="text-[10px] sm:text-xs text-gray-500 hidden xs:inline">{formatTime(event.timestamp)}</span>
         </div>
       </div>
 
       {/* Content */}
-      <div className="pl-13">
-        <p className="text-gray-200 leading-relaxed whitespace-pre-wrap">{content}</p>
+      <div className="sm:pl-13">
+        <p className="text-gray-200 text-sm sm:text-base leading-relaxed whitespace-pre-wrap">{content}</p>
         
         {/* Impact section */}
         {event.impact && impactDescription && (
-          <div className="mt-4 p-3 bg-game-bg/50 rounded-lg border border-game-border/50">
-            <p className="text-sm text-gray-400">
+          <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-game-bg/50 rounded-lg border border-game-border/50">
+            <p className="text-xs sm:text-sm text-gray-400">
               <span className="font-medium text-gray-300">Impact:</span>{' '}
               {impactDescription}
             </p>
@@ -169,8 +169,8 @@ export function EventFeed() {
   };
 
   return (
-    <div ref={feedRef} className="h-full overflow-y-auto p-6">
-      <div className="max-w-3xl mx-auto space-y-4">
+    <div ref={feedRef} className="h-full overflow-y-auto p-3 sm:p-6">
+      <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4">
         {events.map((event) => (
           <EventCard 
             key={event.id} 
@@ -183,15 +183,15 @@ export function EventFeed() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="glass-card p-5"
+            className="glass-card p-3 sm:p-5"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-game-accent/20 flex items-center justify-center">
-                <div className="w-5 h-5 border-2 border-game-accent border-t-transparent rounded-full animate-spin" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-game-accent/20 flex items-center justify-center">
+                <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-game-accent border-t-transparent rounded-full animate-spin" />
               </div>
               <div>
-                <p className="font-medium">Processing world events...</p>
-                <p className="text-sm text-gray-500">The world is responding to your action</p>
+                <p className="font-medium text-sm sm:text-base">Processing world events...</p>
+                <p className="text-xs sm:text-sm text-gray-500">The world is responding to your action</p>
               </div>
             </div>
           </motion.div>

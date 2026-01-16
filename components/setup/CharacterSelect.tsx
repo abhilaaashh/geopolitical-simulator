@@ -21,11 +21,11 @@ function ResourceBar({ label, value, icon }: { label: string; value?: number; ic
     <div className="flex items-center gap-2">
       <div className="text-gray-500">{icon}</div>
       <div className="flex-1">
-        <div className="flex justify-between text-xs mb-1">
+        <div className="flex justify-between text-[10px] sm:text-xs mb-1">
           <span className="text-gray-500">{label}</span>
           <span className="text-gray-400">{value}</span>
         </div>
-        <div className="h-1.5 bg-game-bg rounded-full overflow-hidden">
+        <div className="h-1 sm:h-1.5 bg-game-bg rounded-full overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-game-accent to-purple-500 rounded-full transition-all duration-500"
             style={{ width: `${value}%` }}
@@ -44,40 +44,40 @@ function ActorCard({ actor, isSelected, onSelect }: { actor: Actor; isSelected: 
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={onSelect}
-      className={`glass-card-hover p-6 text-left w-full ${
+      className={`glass-card-hover p-4 sm:p-6 text-left w-full ${
         isSelected ? 'border-game-accent shadow-lg shadow-game-accent/20' : ''
       }`}
     >
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3 sm:gap-4">
         <div
-          className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl"
+          className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-lg sm:text-2xl flex-shrink-0"
           style={{ backgroundColor: `${actor.color || '#6366f1'}20` }}
         >
-          {actor.avatar || TYPE_ICONS[actor.type] || <User className="w-5 h-5" />}
+          {actor.avatar || TYPE_ICONS[actor.type] || <User className="w-4 h-4 sm:w-5 sm:h-5" />}
         </div>
         
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-1">
-            <h3 className="font-semibold text-lg truncate">{actor.name}</h3>
+          <div className="flex items-center justify-between mb-1 gap-2">
+            <h3 className="font-semibold text-sm sm:text-lg truncate">{actor.name}</h3>
             {isSelected && (
-              <div className="w-6 h-6 bg-game-accent rounded-full flex items-center justify-center">
-                <Check className="w-4 h-4" />
+              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-game-accent rounded-full flex items-center justify-center flex-shrink-0">
+                <Check className="w-3 h-3 sm:w-4 sm:h-4" />
               </div>
             )}
           </div>
           
           <div className="flex items-center gap-2 mb-2">
             <span
-              className="px-2 py-0.5 text-xs rounded-full"
+              className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs rounded-full"
               style={{ backgroundColor: `${actor.color || '#6366f1'}30`, color: actor.color || '#6366f1' }}
             >
               {actor.type || 'unknown'}
             </span>
           </div>
           
-          <p className="text-sm text-gray-400 mb-4 line-clamp-2">{actor.description}</p>
+          <p className="text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4 line-clamp-2">{actor.description}</p>
           
-          <div className="space-y-2">
+          <div className="space-y-1.5 sm:space-y-2">
             <ResourceBar label="Military" value={resources.military} icon={<Shield className="w-3 h-3" />} />
             <ResourceBar label="Economic" value={resources.economic} icon={<Coins className="w-3 h-3" />} />
             <ResourceBar label="Diplomatic" value={resources.diplomatic} icon={<MessageSquare className="w-3 h-3" />} />
@@ -102,38 +102,39 @@ export function CharacterSelect() {
   };
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-4 sm:p-8">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
           <button
             onClick={resetGame}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4"
+            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-3 sm:mb-4 text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to scenario selection
+            <span className="hidden xs:inline">Back to scenario selection</span>
+            <span className="xs:hidden">Back</span>
           </button>
           
-          <h1 className="text-4xl font-bold mb-2">{scenario.title}</h1>
-          <p className="text-gray-400">{scenario.description}</p>
+          <h1 className="text-2xl sm:text-4xl font-bold mb-2">{scenario.title}</h1>
+          <p className="text-sm sm:text-base text-gray-400 line-clamp-2 sm:line-clamp-none">{scenario.description}</p>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <h2 className="text-2xl font-semibold mb-2">Choose Your Role</h2>
-          <p className="text-gray-400">
+          <h2 className="text-lg sm:text-2xl font-semibold mb-1 sm:mb-2">Choose Your Role</h2>
+          <p className="text-xs sm:text-base text-gray-400">
             Select which actor you want to play as. Each has different capabilities and objectives.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
           {scenario.actors.map((actor, index) => (
             <motion.div
               key={actor.id}
@@ -154,10 +155,11 @@ export function CharacterSelect() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex justify-center"
+            className="flex justify-center sticky bottom-4 sm:relative sm:bottom-auto"
           >
-            <button onClick={handleConfirm} className="btn-primary px-12 text-lg">
-              Continue as {scenario.actors.find(a => a.id === selectedId)?.name}
+            <button onClick={handleConfirm} className="btn-primary px-6 sm:px-12 text-sm sm:text-lg w-full sm:w-auto shadow-lg sm:shadow-none">
+              <span className="hidden sm:inline">Continue as {scenario.actors.find(a => a.id === selectedId)?.name}</span>
+              <span className="sm:hidden">Continue</span>
             </button>
           </motion.div>
         )}

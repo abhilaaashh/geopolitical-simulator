@@ -103,34 +103,34 @@ export function GoalProgress({
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`glass-card rounded-none border-x-0 border-t-0 px-4 py-2 ${className}`}
+      className={`glass-card rounded-none border-x-0 border-t-0 px-3 sm:px-4 py-2 ${className}`}
     >
       {/* Compact header row - always visible */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between gap-3 group"
+        className="w-full flex items-center justify-between gap-2 sm:gap-3 group"
       >
-        <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${colors.bg}`}>
-            <Target className={`w-3.5 h-3.5 ${colors.text}`} />
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+          <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${colors.bg}`}>
+            <Target className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${colors.text}`} />
           </div>
-          <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider flex-shrink-0">
+          <span className="hidden sm:inline text-[10px] font-medium text-gray-500 uppercase tracking-wider flex-shrink-0">
             Objective
           </span>
           {goal.type === 'custom' && (
-            <span className="text-[9px] font-medium px-1 py-0.5 bg-purple-500/20 text-purple-400 rounded border border-purple-500/30 flex-shrink-0">
+            <span className="hidden sm:inline text-[9px] font-medium px-1 py-0.5 bg-purple-500/20 text-purple-400 rounded border border-purple-500/30 flex-shrink-0">
               CUSTOM
             </span>
           )}
-          <p className="text-gray-200 text-sm font-medium truncate min-w-0 flex-1">
+          <p className="text-gray-200 text-xs sm:text-sm font-medium truncate min-w-0 flex-1">
             {goal.description}
           </p>
         </div>
 
         {/* Progress + world state summary + expand toggle */}
-        <div className="flex items-center gap-3 flex-shrink-0">
-          {/* Quick world state indicators (collapsed view) */}
-          <div className="hidden md:flex items-center gap-3 text-xs">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          {/* Quick world state indicators (collapsed view) - hidden on mobile */}
+          <div className="hidden lg:flex items-center gap-3 text-xs">
             <div className="flex items-center gap-1.5">
               <Zap className="w-3.5 h-3.5 text-game-accent" />
               <div className="w-16 h-1.5 bg-game-bg rounded-full overflow-hidden">
@@ -145,10 +145,10 @@ export function GoalProgress({
             )}
           </div>
 
-          <div className="h-4 w-px bg-game-border" />
+          <div className="hidden sm:block h-4 w-px bg-game-border" />
 
-          {/* Progress bar (compact) */}
-          <div className="hidden sm:block w-20">
+          {/* Progress bar (compact) - hidden on mobile */}
+          <div className="hidden md:block w-20">
             <div className="relative h-1.5 bg-game-bg rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
@@ -165,7 +165,7 @@ export function GoalProgress({
               key={goal.progress}
               initial={{ scale: 1.2, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className={`text-lg font-bold ${colors.text}`}
+              className={`text-base sm:text-lg font-bold ${colors.text}`}
             >
               {goal.progress}%
             </motion.span>
@@ -186,7 +186,7 @@ export function GoalProgress({
                   ) : (
                     <TrendingDown className="w-3 h-3" />
                   )}
-                  <span>{progressChange > 0 ? '+' : ''}{progressChange}</span>
+                  <span className="hidden sm:inline">{progressChange > 0 ? '+' : ''}{progressChange}</span>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -215,12 +215,12 @@ export function GoalProgress({
           >
             <div className="pt-3 space-y-3">
               {/* World State Section */}
-              <div className="flex flex-wrap items-center gap-4 p-2.5 bg-game-bg/50 rounded-lg">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 p-2 sm:p-2.5 bg-game-bg/50 rounded-lg">
                 {/* Tension Level */}
-                <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-game-accent" />
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <Zap className="w-4 h-4 text-game-accent flex-shrink-0" />
                   <span className="text-xs text-gray-400">Tension</span>
-                  <div className="w-24 h-1.5 bg-game-bg rounded-full overflow-hidden">
+                  <div className="flex-1 sm:flex-none sm:w-24 h-1.5 bg-game-bg rounded-full overflow-hidden">
                     <motion.div
                       className={`h-full ${getTensionColor(tensionLevel)} transition-all`}
                       initial={{ width: 0 }}
@@ -228,9 +228,9 @@ export function GoalProgress({
                       transition={{ duration: 0.5 }}
                     />
                   </div>
-                  <span className="text-xs font-medium flex items-center gap-1">
+                  <span className="text-xs font-medium flex items-center gap-1 flex-shrink-0">
                     {getTensionIcon()}
-                    {getTensionLabel()}
+                    <span className="hidden xs:inline">{getTensionLabel()}</span>
                   </span>
                 </div>
 
@@ -238,7 +238,7 @@ export function GoalProgress({
 
                 {/* Global Sentiment */}
                 <div className="flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-blue-400" />
+                  <Globe className="w-4 h-4 text-blue-400 flex-shrink-0" />
                   <span className="text-xs text-gray-400">Sentiment:</span>
                   <span className="text-xs font-medium">
                     {typeof worldState.globalSentiment === 'string' ? worldState.globalSentiment : 'Neutral'}
@@ -260,7 +260,7 @@ export function GoalProgress({
                   <>
                     <div className="h-4 w-px bg-game-border hidden sm:block" />
                     <div className="flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4 text-red-400" />
+                      <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0" />
                       <span className="text-xs text-gray-400">Active:</span>
                       <span className="text-xs text-red-400 font-medium">
                         {activeConflicts.length} conflict{activeConflicts.length > 1 ? 's' : ''}
@@ -299,10 +299,10 @@ export function GoalProgress({
 
                 <div className="flex items-center justify-between text-[10px] text-gray-500">
                   <span>Turn {currentTurn}</span>
-                  <div className="flex gap-4">
-                    <span>25%</span>
+                  <div className="flex gap-2 sm:gap-4">
+                    <span className="hidden xs:inline">25%</span>
                     <span>50%</span>
-                    <span>75%</span>
+                    <span className="hidden xs:inline">75%</span>
                     <span>100%</span>
                   </div>
                 </div>
@@ -313,11 +313,11 @@ export function GoalProgress({
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex items-start gap-2 p-2.5 bg-game-bg rounded-lg"
+                  className="flex items-start gap-2 p-2 sm:p-2.5 bg-game-bg rounded-lg"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-400 leading-relaxed">
+                    <p className="text-[11px] sm:text-xs text-gray-400 leading-relaxed">
                       {goal.lastEvaluation}
                     </p>
                     {goal.evaluatedAt && (
@@ -331,8 +331,8 @@ export function GoalProgress({
 
               {/* Initial state - no evaluation yet */}
               {!goal.lastEvaluation && (
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <Info className="w-3 h-3" />
+                <div className="flex items-center gap-2 text-[11px] sm:text-xs text-gray-500">
+                  <Info className="w-3 h-3 flex-shrink-0" />
                   <span>Progress will be evaluated after your first action</span>
                 </div>
               )}

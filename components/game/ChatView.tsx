@@ -18,9 +18,9 @@ function ChatBubble({ event, actorColor, isPlayer }: {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex justify-center my-4"
+        className="flex justify-center my-3 sm:my-4"
       >
-        <div className="px-4 py-2 bg-game-accent/10 border border-game-accent/30 rounded-full text-sm text-game-accent">
+        <div className="px-3 sm:px-4 py-1.5 sm:py-2 bg-game-accent/10 border border-game-accent/30 rounded-full text-xs sm:text-sm text-game-accent text-center max-w-[90%]">
           {event.content}
         </div>
       </motion.div>
@@ -31,12 +31,12 @@ function ChatBubble({ event, actorColor, isPlayer }: {
     <motion.div
       initial={{ opacity: 0, x: isPlayer ? 20 : -20 }}
       animate={{ opacity: 1, x: 0 }}
-      className={`flex ${isPlayer ? 'justify-end' : 'justify-start'} mb-3`}
+      className={`flex ${isPlayer ? 'justify-end' : 'justify-start'} mb-2 sm:mb-3`}
     >
-      <div className={`flex items-end gap-2 max-w-[80%] ${isPlayer ? 'flex-row-reverse' : ''}`}>
+      <div className={`flex items-end gap-1.5 sm:gap-2 max-w-[85%] sm:max-w-[80%] ${isPlayer ? 'flex-row-reverse' : ''}`}>
         {/* Avatar */}
         <div
-          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0"
+          className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium flex-shrink-0"
           style={{ backgroundColor: actorColor ? `${actorColor}30` : '#374151' }}
         >
           {event.actorName.charAt(0)}
@@ -44,24 +44,24 @@ function ChatBubble({ event, actorColor, isPlayer }: {
         
         {/* Message */}
         <div
-          className={`px-4 py-3 rounded-2xl ${
+          className={`px-3 sm:px-4 py-2 sm:py-3 rounded-2xl ${
             isPlayer
               ? 'bg-game-accent text-white rounded-br-md'
               : 'bg-game-card border border-game-border rounded-bl-md'
           }`}
         >
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
             <span 
-              className="text-xs font-medium"
+              className="text-[10px] sm:text-xs font-medium truncate max-w-[100px] sm:max-w-none"
               style={{ color: isPlayer ? 'rgba(255,255,255,0.8)' : actorColor }}
             >
               {event.actorName}
             </span>
-            <span className={`text-xs ${isPlayer ? 'text-white/60' : 'text-gray-500'}`}>
+            <span className={`text-[10px] sm:text-xs flex-shrink-0 ${isPlayer ? 'text-white/60' : 'text-gray-500'}`}>
               {formatTime(event.timestamp)}
             </span>
           </div>
-          <p className={`text-sm leading-relaxed ${isPlayer ? '' : 'text-gray-200'}`}>
+          <p className={`text-xs sm:text-sm leading-relaxed ${isPlayer ? '' : 'text-gray-200'}`}>
             {event.content}
           </p>
           
@@ -69,7 +69,7 @@ function ChatBubble({ event, actorColor, isPlayer }: {
             <div className={`mt-2 pt-2 border-t ${
               isPlayer ? 'border-white/20' : 'border-game-border'
             }`}>
-              <p className={`text-xs ${isPlayer ? 'text-white/70' : 'text-gray-400'}`}>
+              <p className={`text-[10px] sm:text-xs ${isPlayer ? 'text-white/70' : 'text-gray-400'}`}>
                 📊 {event.impact.description}
               </p>
             </div>
@@ -85,16 +85,16 @@ function NewsAlert({ event }: { event: GameEvent }) {
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mx-4 my-3"
+      className="mx-2 sm:mx-4 my-2 sm:my-3"
     >
-      <div className="glass-card p-3 border-l-4 border-red-500">
+      <div className="glass-card p-2.5 sm:p-3 border-l-4 border-red-500">
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-xs font-bold text-red-400 uppercase tracking-wider">
+          <span className="text-[10px] sm:text-xs font-bold text-red-400 uppercase tracking-wider">
             Breaking
           </span>
-          <span className="text-xs text-gray-500">{formatTime(event.timestamp)}</span>
+          <span className="text-[10px] sm:text-xs text-gray-500">{formatTime(event.timestamp)}</span>
         </div>
-        <p className="text-sm text-gray-200">{event.content}</p>
+        <p className="text-xs sm:text-sm text-gray-200">{event.content}</p>
       </div>
     </motion.div>
   );
@@ -115,7 +115,7 @@ export function ChatView() {
   };
 
   return (
-    <div ref={chatRef} className="h-full overflow-y-auto p-4">
+    <div ref={chatRef} className="h-full overflow-y-auto p-2 sm:p-4">
       <div className="max-w-2xl mx-auto">
         {events.map((event) => {
           // News events get special treatment
@@ -137,14 +137,14 @@ export function ChatView() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex justify-start mb-3"
+            className="flex justify-start mb-2 sm:mb-3"
           >
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-game-border flex items-center justify-center">
-                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-game-border flex items-center justify-center">
+                <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
               </div>
-              <div className="px-4 py-3 bg-game-card border border-game-border rounded-2xl rounded-bl-md">
-                <span className="text-sm text-gray-400 typing-indicator">Typing</span>
+              <div className="px-3 sm:px-4 py-2 sm:py-3 bg-game-card border border-game-border rounded-2xl rounded-bl-md">
+                <span className="text-xs sm:text-sm text-gray-400 typing-indicator">Typing</span>
               </div>
             </div>
           </motion.div>

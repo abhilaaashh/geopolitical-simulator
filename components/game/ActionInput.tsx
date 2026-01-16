@@ -305,9 +305,9 @@ export function ActionInput() {
   };
 
   return (
-    <div className="glass-card rounded-none border-x-0 border-b-0 p-4">
-      {/* Action Type Selector */}
-      <div className="flex flex-wrap gap-2 mb-3">
+    <div className="glass-card rounded-none border-x-0 border-b-0 p-3 sm:p-4">
+      {/* Action Type Selector - horizontally scrollable on mobile */}
+      <div className="flex gap-2 mb-3 overflow-x-auto pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:flex-wrap sm:overflow-visible scrollbar-hide">
         {ACTION_TYPES.map((actionType) => (
           <motion.button
             key={actionType.type}
@@ -316,20 +316,20 @@ export function ActionInput() {
             onClick={() => setActionType(
               selectedActionType === actionType.type ? undefined : actionType.type
             )}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all flex-shrink-0 ${
               selectedActionType === actionType.type
                 ? actionType.color + ' ring-2 ring-offset-1 ring-offset-game-bg'
                 : 'bg-game-card border-game-border text-gray-400 hover:text-white hover:border-gray-600'
             }`}
           >
             {actionType.icon}
-            <span>{actionType.label}</span>
+            <span className="whitespace-nowrap">{actionType.label}</span>
           </motion.button>
         ))}
       </div>
 
-      {/* Input area */}
-      <div className="flex gap-3">
+      {/* Input area - stacks on mobile */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
         <div className="flex-1">
           <textarea
             value={action}
@@ -337,7 +337,7 @@ export function ActionInput() {
             onKeyDown={handleKeyDown}
             placeholder={getPlaceholder()}
             disabled={isProcessing}
-            className={`input-field resize-none h-20 ${
+            className={`input-field resize-none h-16 sm:h-20 text-sm sm:text-base ${
               selectedConfig ? 'border-l-4' : ''
             }`}
             style={selectedConfig ? {
@@ -353,18 +353,19 @@ export function ActionInput() {
           />
         </div>
         
-        <div className="flex flex-col gap-2">
+        {/* Buttons - horizontal on mobile, vertical on desktop */}
+        <div className="flex flex-row sm:flex-col gap-2">
           <button
             onClick={handleSubmit}
             disabled={isProcessing || !action.trim()}
-            className="btn-primary px-6 h-[38px] flex items-center justify-center gap-2"
+            className="btn-primary flex-1 sm:flex-none px-4 sm:px-6 h-[44px] sm:h-[38px] flex items-center justify-center gap-2 min-w-[44px]"
           >
             {isProcessing ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <Send className="w-4 h-4" />
             )}
-            <span className="text-xs">
+            <span className="text-xs hidden xs:inline sm:inline">
               {isProcessing ? 'Processing...' : 'Send'}
             </span>
           </button>
@@ -372,25 +373,26 @@ export function ActionInput() {
           <button
             onClick={handleSkipTurn}
             disabled={isProcessing}
-            className="px-6 h-[38px] flex items-center justify-center gap-2 rounded-lg border border-game-border bg-game-card text-gray-400 hover:text-white hover:border-gray-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 sm:flex-none px-4 sm:px-6 h-[44px] sm:h-[38px] flex items-center justify-center gap-2 rounded-xl sm:rounded-lg border border-game-border bg-game-card text-gray-400 hover:text-white hover:border-gray-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-w-[44px]"
           >
             {isProcessing ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <SkipForward className="w-4 h-4" />
             )}
-            <span className="text-xs">Skip</span>
+            <span className="text-xs hidden xs:inline sm:inline">Skip</span>
           </button>
         </div>
       </div>
       
-      <p className="text-xs text-gray-500 mt-2">
+      <p className="text-[10px] sm:text-xs text-gray-500 mt-2">
         {selectedConfig ? (
           <>
             <span className="text-gray-400">{selectedConfig.label} action selected</span> • 
           </>
         ) : null}
-        Press Enter to send • Shift+Enter for new line • Skip to observe without acting
+        <span className="hidden sm:inline">Press Enter to send • Shift+Enter for new line • Skip to observe without acting</span>
+        <span className="sm:hidden">Enter to send • Skip to observe</span>
       </p>
     </div>
   );

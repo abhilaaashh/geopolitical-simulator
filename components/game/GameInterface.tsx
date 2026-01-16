@@ -46,41 +46,41 @@ export function GameInterface() {
     return (
       <div className="h-screen flex flex-col overflow-hidden">
         {/* Unified top bar for social view */}
-        <header className="glass-card rounded-none border-x-0 border-t-0 px-4 py-2 flex items-center justify-between z-20">
-          <div className="flex items-center gap-3">
+        <header className="glass-card rounded-none border-x-0 border-t-0 px-2 sm:px-4 py-1.5 sm:py-2 flex items-center justify-between z-20">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             {/* Logo */}
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-game-accent to-purple-600 flex items-center justify-center shrink-0">
-              <span className="text-sm font-bold">SR</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-game-accent to-purple-600 flex items-center justify-center shrink-0">
+              <span className="text-xs sm:text-sm font-bold">SR</span>
             </div>
             <div className="hidden sm:block border-r border-game-border pr-3">
-              <h1 className="font-bold text-sm leading-tight">{scenario.title}</h1>
+              <h1 className="font-bold text-sm leading-tight truncate max-w-[150px] lg:max-w-none">{scenario.title}</h1>
               <p className="text-xs text-gray-500">Turn {currentTurn}</p>
             </div>
             {/* Compact goal progress in header for social view */}
             {playerGoal && (
-              <div className="hidden md:block w-48 lg:w-64">
+              <div className="hidden lg:block w-48 xl:w-64">
                 <GoalProgressCompact goal={playerGoal} />
               </div>
             )}
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <ViewToggle />
             <button
               onClick={() => setShowSummary(true)}
-              className="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 px-2 py-1.5 hover:bg-white/5 rounded"
+              className="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 px-1.5 sm:px-2 py-1.5 hover:bg-white/5 rounded min-w-[32px] justify-center sm:justify-start"
             >
               <ScrollText className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Summary</span>
             </button>
             
-            <div className="h-4 w-px bg-game-border mx-1" />
+            <div className="hidden sm:block h-4 w-px bg-game-border mx-1" />
             
             {/* Save button */}
             {user && (
               <button
                 onClick={openSaveTab}
-                className="flex items-center gap-1.5 px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
+                className="hidden xs:flex items-center gap-1.5 px-1.5 sm:px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
               >
                 <Save className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Save</span>
@@ -91,7 +91,7 @@ export function GameInterface() {
             {user && (
               <button
                 onClick={openSessionsTab}
-                className="flex items-center gap-1.5 px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
+                className="hidden sm:flex items-center gap-1.5 px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
               >
                 <History className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Sessions</span>
@@ -100,26 +100,27 @@ export function GameInterface() {
             
             {/* Auth */}
             {isLoading ? (
-              <div className="w-7 h-7 rounded-full bg-white/10 animate-pulse" />
+              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/10 animate-pulse" />
             ) : user ? (
               <UserMenu onOpenSessions={openSessionsTab} onOpenAnalytics={() => setShowAnalytics(true)} />
             ) : (
               <button
                 onClick={() => setShowLogin(true)}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 bg-game-accent hover:bg-game-accent/90 rounded text-xs font-medium transition-colors"
+                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1.5 bg-game-accent hover:bg-game-accent/90 rounded text-xs font-medium transition-colors"
               >
                 <LogIn className="w-3.5 h-3.5" />
-                <span>Sign In</span>
+                <span className="hidden xs:inline">Sign In</span>
               </button>
             )}
             
-            <div className="h-4 w-px bg-game-border mx-1" />
+            <div className="hidden xs:block h-4 w-px bg-game-border mx-1" />
             
             <button
               onClick={resetGame}
-              className="text-xs text-gray-400 hover:text-white transition-colors px-2 py-1.5 hover:bg-white/5 rounded"
+              className="text-xs text-gray-400 hover:text-white transition-colors px-1.5 sm:px-2 py-1.5 hover:bg-white/5 rounded"
             >
-              Exit
+              <span className="hidden xs:inline">Exit</span>
+              <X className="w-4 h-4 xs:hidden" />
             </button>
           </div>
         </header>
@@ -154,11 +155,11 @@ export function GameInterface() {
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       {/* Unified top bar */}
-      <header className="glass-card rounded-none border-x-0 border-t-0 px-4 py-2 flex items-center justify-between z-20">
-        <div className="flex items-center gap-3">
+      <header className="glass-card rounded-none border-x-0 border-t-0 px-2 sm:px-4 py-1.5 sm:py-2 flex items-center justify-between z-20">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           {/* Logo */}
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-game-accent to-purple-600 flex items-center justify-center shrink-0">
-            <span className="text-sm font-bold">SR</span>
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-game-accent to-purple-600 flex items-center justify-center shrink-0">
+            <span className="text-xs sm:text-sm font-bold">SR</span>
           </div>
           
           <button
@@ -168,29 +169,29 @@ export function GameInterface() {
             {showSidebar ? <X className="w-4 h-4" /> : <Users className="w-4 h-4" />}
           </button>
           
-          <div className="border-r border-game-border pr-3">
-            <h1 className="font-bold text-sm leading-tight">{scenario.title}</h1>
-            <p className="text-xs text-gray-500">Turn {currentTurn}</p>
+          <div className="hidden xs:block border-r border-game-border pr-2 sm:pr-3">
+            <h1 className="font-bold text-xs sm:text-sm leading-tight truncate max-w-[100px] sm:max-w-[150px] lg:max-w-none">{scenario.title}</h1>
+            <p className="text-[10px] sm:text-xs text-gray-500">Turn {currentTurn}</p>
           </div>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <ViewToggle />
           <button
             onClick={() => setShowSummary(true)}
-            className="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 px-2 py-1.5 hover:bg-white/5 rounded"
+            className="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 px-1.5 sm:px-2 py-1.5 hover:bg-white/5 rounded min-w-[32px] justify-center sm:justify-start"
           >
             <ScrollText className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Summary</span>
           </button>
           
-          <div className="h-4 w-px bg-game-border mx-1" />
+          <div className="hidden sm:block h-4 w-px bg-game-border mx-1" />
           
           {/* Save button */}
           {user && (
             <button
               onClick={openSaveTab}
-              className="flex items-center gap-1.5 px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
+              className="hidden xs:flex items-center gap-1.5 px-1.5 sm:px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
             >
               <Save className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Save</span>
@@ -201,7 +202,7 @@ export function GameInterface() {
           {user && (
             <button
               onClick={openSessionsTab}
-              className="flex items-center gap-1.5 px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
+              className="hidden sm:flex items-center gap-1.5 px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
             >
               <History className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Sessions</span>
@@ -210,26 +211,27 @@ export function GameInterface() {
           
           {/* Auth */}
           {isLoading ? (
-            <div className="w-7 h-7 rounded-full bg-white/10 animate-pulse" />
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/10 animate-pulse" />
           ) : user ? (
             <UserMenu onOpenSessions={openSessionsTab} onOpenAnalytics={() => setShowAnalytics(true)} />
           ) : (
             <button
               onClick={() => setShowLogin(true)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-game-accent hover:bg-game-accent/90 rounded text-xs font-medium transition-colors"
+              className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1.5 bg-game-accent hover:bg-game-accent/90 rounded text-xs font-medium transition-colors"
             >
               <LogIn className="w-3.5 h-3.5" />
-              <span>Sign In</span>
+              <span className="hidden xs:inline">Sign In</span>
             </button>
           )}
           
-          <div className="h-4 w-px bg-game-border mx-1" />
+          <div className="hidden xs:block h-4 w-px bg-game-border mx-1" />
           
           <button
             onClick={resetGame}
-            className="text-xs text-gray-400 hover:text-white transition-colors px-2 py-1.5 hover:bg-white/5 rounded"
+            className="text-xs text-gray-400 hover:text-white transition-colors px-1.5 sm:px-2 py-1.5 hover:bg-white/5 rounded"
           >
-            Exit
+            <span className="hidden xs:inline">Exit</span>
+            <X className="w-4 h-4 xs:hidden" />
           </button>
         </div>
       </header>

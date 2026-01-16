@@ -32,28 +32,28 @@ export function AppHeader() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             {/* Logo/Title */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-game-accent to-purple-600 flex items-center justify-center">
-                <span className="text-lg font-bold">SR</span>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-game-accent to-purple-600 flex items-center justify-center">
+                <span className="text-sm sm:text-lg font-bold">SR</span>
               </div>
-              <div className="hidden sm:block">
-                <h1 className="font-bold text-lg leading-tight">The Situation Room</h1>
-                <p className="text-xs text-gray-500">Geopolitical Simulator</p>
+              <div className="hidden xs:block">
+                <h1 className="font-bold text-sm sm:text-lg leading-tight">The Situation Room</h1>
+                <p className="text-[10px] sm:text-xs text-gray-500">Geopolitical Simulator</p>
               </div>
             </div>
 
             {/* Right side actions */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {/* Quick save button (when in game and logged in) */}
               {canSave && (
                 <button
                   onClick={openSaveTab}
-                  className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-sm"
+                  className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-xs sm:text-sm"
                 >
-                  <Save className="w-4 h-4" />
+                  <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">Save</span>
                 </button>
               )}
@@ -62,24 +62,24 @@ export function AppHeader() {
               {user && (
                 <button
                   onClick={openSessionsTab}
-                  className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-sm"
+                  className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-xs sm:text-sm"
                 >
-                  <History className="w-4 h-4" />
+                  <History className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">Sessions</span>
                 </button>
               )}
 
               {/* Auth button/menu */}
               {isLoading ? (
-                <div className="w-10 h-10 rounded-full bg-white/10 animate-pulse" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 animate-pulse" />
               ) : user ? (
                 <UserMenu onOpenSessions={openSessionsTab} onOpenAnalytics={() => setShowAnalytics(true)} />
               ) : (
                 <button
                   onClick={() => setShowLogin(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-game-accent hover:bg-game-accent/90 rounded-lg transition-colors text-sm font-medium"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-game-accent hover:bg-game-accent/90 rounded-lg transition-colors text-xs sm:text-sm font-medium"
                 >
-                  <LogIn className="w-4 h-4" />
+                  <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   <span>Sign In</span>
                 </button>
               )}
