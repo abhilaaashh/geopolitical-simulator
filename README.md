@@ -1,6 +1,6 @@
-# 🌍 Geopolitical Simulator
+# 🌍 The Situation Room
 
-An immersive, LLM-powered turn-based geopolitical simulation game. Choose any real-world scenario, select your role, and shape history through strategic decisions.
+An immersive, LLM-powered turn-based geopolitical simulation game. Step into The Situation Room, choose any real-world scenario, select your role, and shape history through strategic decisions.
 
 ## Features
 

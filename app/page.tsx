@@ -89,12 +89,12 @@ export default function Home() {
             className="min-h-screen flex items-center justify-center p-8"
           >
             <div className="glass-card p-12 text-center max-w-2xl">
-              <h1 className="text-4xl font-bold mb-4">Simulation Complete</h1>
+              <h1 className="text-4xl font-bold mb-4">Session Complete</h1>
               <p className="text-gray-400 mb-8">
-                Your journey through this geopolitical scenario has concluded.
+                Your time in The Situation Room has concluded.
               </p>
               <button onClick={resetGame} className="btn-primary">
-                Start New Simulation
+                Return to Situation Room
               </button>
             </div>
           </motion.div>

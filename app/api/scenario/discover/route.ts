@@ -223,6 +223,14 @@ ${content.slice(0, 2000)}`;
 
 export async function POST(request: NextRequest) {
   try {
+    // Check for API key first
+    if (!process.env.GEMINI_API_KEY) {
+      return NextResponse.json(
+        { error: 'Gemini API key is not configured. Please add GEMINI_API_KEY to your .env.local file.' },
+        { status: 500 }
+      );
+    }
+
     const { query, sourceUrl, timeframe } = await request.json();
 
     if (!query && !sourceUrl) {
@@ -362,8 +370,28 @@ Based on the above URL content and additional context, create a comprehensive ge
     return NextResponse.json({ scenario });
   } catch (error) {
     console.error('Scenario discovery error:', error);
+    
+    // Check for specific error types
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    
+    // Handle Gemini API authentication errors
+    if (errorMessage.includes('403') || errorMessage.includes('unregistered callers') || errorMessage.includes('API Key')) {
+      return NextResponse.json(
+        { error: 'Invalid or expired Gemini API key. Please check your GEMINI_API_KEY in .env.local.' },
+        { status: 500 }
+      );
+    }
+    
+    // Handle rate limiting
+    if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('rate limit')) {
+      return NextResponse.json(
+        { error: 'API rate limit exceeded. Please wait a moment and try again.' },
+        { status: 429 }
+      );
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to discover scenario' },
+      { error: 'Failed to discover scenario. Please try again.' },
       { status: 500 }
     );
   }

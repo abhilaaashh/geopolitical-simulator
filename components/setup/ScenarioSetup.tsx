@@ -222,12 +222,12 @@ export function ScenarioSetup() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <Globe className="w-12 h-12 text-game-accent" />
             <h1 className="text-5xl font-bold text-gradient">
-              Geopolitical Simulator
+              The Situation Room
             </h1>
           </div>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Experience history from any perspective. Choose a real-world scenario,
-            pick your role, and shape the outcome through strategic decisions.
+            Step into the room where history is made. Choose a real-world scenario,
+            assume your role, and shape the outcome through strategic decisions.
           </p>
         </motion.div>
 

@@ -5,8 +5,8 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Geopolitical Simulator | LLM-Powered Strategy Game',
-  description: 'An immersive turn-based geopolitical simulation powered by AI. Choose your scenario, pick your role, and shape world history.',
+  title: 'The Situation Room | LLM-Powered Strategy Game',
+  description: 'An immersive turn-based geopolitical simulation powered by AI. Step into The Situation Room, choose your scenario, pick your role, and shape world history.',
 };
 
 export default function RootLayout({
