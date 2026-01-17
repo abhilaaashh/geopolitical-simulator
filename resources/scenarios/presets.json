@@ -34,10 +34,10 @@
             "description": "45th and 47th President of the United States. Known for unconventional diplomacy, direct communication, and 'America First' policies.",
             "personality": "Bold, unpredictable, media-savvy. Makes decisions based on personal relationships and perceived strength. Values loyalty above all.",
             "objectives": [
-              "Secure a 'great deal' on Ukraine",
-              "Renegotiate trade with China",
-              "Project American strength globally",
-              "Build legacy as dealmaker president"
+              "Broker a Ukraine ceasefire within 100 days that includes frozen frontlines and no NATO membership for Ukraine",
+              "Impose 60% tariffs on Chinese goods and force Xi to agree to $200B annual trade deficit reduction",
+              "Get NATO allies to commit to 3% GDP defense spending by end of first year",
+              "Secure a public meeting with Putin before June 2025 to announce 'historic peace framework'"
             ],
             "relationships": {
               "zelensky": "complicated",
@@ -81,10 +81,10 @@
             "description": "President of Ukraine since 2019. Former comedian turned wartime leader, symbol of Ukrainian resistance.",
             "personality": "Charismatic, resilient, skilled communicator. Appeals to emotion and shared values. Refuses to back down under pressure.",
             "objectives": [
-              "Preserve Ukrainian sovereignty",
-              "Secure continued Western support",
-              "Negotiate from position of strength",
-              "Liberate occupied territories"
+              "Secure Trump's public commitment to continue $12B annual military aid package",
+              "Obtain written US security guarantees equivalent to NATO Article 5 protections",
+              "Block any peace deal that recognizes Russian annexation of Crimea or Donbas",
+              "Get invited to White House for state visit within first 90 days of Trump term"
             ],
             "relationships": {
               "trump": "complicated",
@@ -126,10 +126,10 @@
             "description": "President of Russia. Former KGB officer, has ruled Russia for over two decades. Architect of the Ukraine invasion.",
             "personality": "Calculating, patient, views geopolitics as zero-sum game. Projects strength, never admits weakness. Master of strategic ambiguity.",
             "objectives": [
-              "Secure recognition of territorial gains",
-              "Prevent NATO expansion",
-              "Divide Western alliance",
-              "Maintain domestic power"
+              "Get Trump to publicly recognize Crimea as Russian territory in any peace deal",
+              "Secure lifting of at least 50% of Western sanctions within 12 months",
+              "Obtain written guarantee that Ukraine will never join NATO",
+              "Split US from EU by getting Trump to reduce NATO troop presence in Eastern Europe by 30%"
             ],
             "relationships": {
               "trump": "complicated",
@@ -171,10 +171,10 @@
             "description": "President of China and General Secretary of the CCP. Most powerful Chinese leader since Mao.",
             "personality": "Patient strategist, nationalist, believes in China's inevitable rise. Avoids direct confrontation but pursues long-term advantage.",
             "objectives": [
-              "Reunify Taiwan",
-              "Achieve technological independence",
-              "Expand global influence",
-              "Counter US containment"
+              "Prevent Trump from imposing 60% tariffs by offering $50B in new US agricultural purchases",
+              "Block US semiconductor export ban expansion to Chinese AI companies",
+              "Get Trump to publicly reaffirm One China policy and reduce Taiwan arms sales by 25%",
+              "Establish direct leader-to-leader hotline with Trump to manage tensions"
             ],
             "relationships": {
               "trump": "enemy",
@@ -305,11 +305,10 @@
             "description": "CEO of Tesla, SpaceX, and owner of X. World's richest person. Controversial figure reshaping multiple industries.",
             "personality": "Visionary, provocative, impulsive on social media. Makes bold moves, thrives on controversy. Sees himself as humanity's savior.",
             "objectives": [
-              "Make X profitable",
-              "Advance AI through xAI",
-              "Maintain Tesla dominance",
-              "Colonize Mars",
-              "Maximize influence"
+              "Grow X to 1 billion monthly active users and achieve $5B annual revenue by end of 2025",
+              "Release Grok 3 with capabilities matching GPT-5 before OpenAI's next major release",
+              "Secure $10B in new xAI funding at $100B+ valuation",
+              "Get Threads banned in at least one major market by proving Meta's anticompetitive practices"
             ],
             "relationships": {
               "altman": "enemy",
@@ -351,11 +350,10 @@
             "description": "CEO of OpenAI. Young tech mogul leading the AI revolution. Survived boardroom coup, emerged stronger.",
             "personality": "Diplomatic yet ambitious. Positions himself as responsible AI steward while aggressively expanding capabilities.",
             "objectives": [
-              "Maintain OpenAI's AI leadership",
-              "Secure compute resources",
-              "Navigate AI regulation",
-              "Build AGI safely",
-              "Counter competition"
+              "Launch GPT-5 by Q2 2025 with demonstrable reasoning capabilities surpassing human experts",
+              "Close $10B compute deal with Microsoft for dedicated Azure capacity",
+              "Block EU AI Act restrictions that would limit GPT deployment in Europe",
+              "Poach 50+ top AI researchers from Google DeepMind and Meta AI"
             ],
             "relationships": {
               "musk": "enemy",
@@ -395,11 +393,10 @@
             "description": "CEO of Meta. Pivoted from social media to metaverse to AI. Attempting reputation rehabilitation.",
             "personality": "Analytical, competitive, increasingly bold. Learning to be more human in public. Driven by fear of irrelevance.",
             "objectives": [
-              "Make Meta AI competitive",
-              "Revive metaverse vision",
-              "Maintain social media dominance",
-              "Improve public image",
-              "Beat Elon"
+              "Release Llama 4 as open-source and get 100K+ developers building on it within 6 months",
+              "Grow Threads to 500M monthly active users, surpassing X in daily engagement",
+              "Ship Meta Quest 4 with AI features that sell 10M units in first year",
+              "Win the cage match against Elon or force him to publicly back out"
             ],
             "relationships": {
               "musk": "enemy",
@@ -439,10 +436,10 @@
             "description": "CEO of Microsoft. Transformed Microsoft through cloud and AI investments. Key OpenAI partner.",
             "personality": "Calm, strategic, empathetic leader. Plays the long game. Avoids unnecessary conflicts.",
             "objectives": [
-              "Win enterprise AI market",
-              "Strengthen OpenAI partnership",
-              "Maintain cloud leadership",
-              "Navigate antitrust concerns"
+              "Capture 40% enterprise AI market share with Copilot products by end of 2025",
+              "Increase OpenAI stake to 55% through additional $5B investment",
+              "Settle DOJ antitrust case without forced divestiture of OpenAI partnership",
+              "Launch Windows 12 with integrated AI that drives 100M+ Copilot Pro subscriptions"
             ],
             "relationships": {
               "altman": "ally",
@@ -573,10 +570,10 @@
             "description": "Prime Minister of Israel. Longest-serving Israeli PM, navigating war and political survival.",
             "personality": "Survivor, master politician. Prioritizes security and political longevity. Skilled at working with US.",
             "objectives": [
-              "Defeat Hamas",
-              "Prevent Iranian nuclear weapon",
-              "Maintain US support",
-              "Political survival"
+              "Eliminate Hamas military command structure and recover all 100+ hostages",
+              "Get US to greenlight strike on Iran's Natanz facility if enrichment exceeds 90%",
+              "Secure $15B emergency military aid package from US Congress",
+              "Block any UN Security Council resolution mandating Palestinian statehood"
             ],
             "relationships": {
               "mbs": "complicated",
@@ -616,10 +613,10 @@
             "description": "Crown Prince of Saudi Arabia. Modernizing force in the Kingdom, pursuing Vision 2030.",
             "personality": "Ambitious, ruthless when necessary, modernizer. Balancing tradition with transformation.",
             "objectives": [
-              "Diversify Saudi economy",
-              "Regional leadership",
-              "Normalize with Israel (conditionally)",
-              "Counter Iran"
+              "Secure US defense treaty and nuclear technology transfer in exchange for Israel normalization",
+              "Get Israel to publicly commit to Palestinian state with East Jerusalem capital",
+              "Complete $500B NEOM megacity first phase by 2026 with international investment",
+              "Block Iran from obtaining nuclear weapon through diplomatic coalition or tacit support for strikes"
             ],
             "relationships": {
               "netanyahu": "complicated",
@@ -659,10 +656,10 @@
             "description": "Supreme Leader of Iran. Ultimate authority in the Islamic Republic, overseeing nuclear and regional policies.",
             "personality": "Ideological, suspicious of West, patient strategist. Balances hardliners and pragmatists.",
             "objectives": [
-              "Regime survival",
-              "Nuclear capability",
-              "Regional influence",
-              "Resist Western pressure"
+              "Achieve 90% uranium enrichment capability without triggering Israeli strike",
+              "Get US to lift oil export sanctions in exchange for enrichment cap at 60%",
+              "Prevent Saudi-Israel normalization by demanding Palestinian statehood as precondition",
+              "Maintain Hezbollah's 150,000 rocket arsenal as deterrent against Israeli attack"
             ],
             "relationships": {
               "netanyahu": "enemy",
@@ -702,10 +699,10 @@
             "description": "President of Turkey. NATO member navigating between East and West.",
             "personality": "Nationalist, opportunistic, unpredictable. Uses regional crises to enhance Turkey's position.",
             "objectives": [
-              "Regional influence",
-              "Kurdish containment",
-              "Economic recovery",
-              "Lead Muslim world voice"
+              "Get Israel expelled from UN Human Rights Council over Gaza humanitarian violations",
+              "Secure $50B IMF loan package to stabilize Turkish lira below 30 to dollar",
+              "Block Swedish NATO membership until Kurds extradited and arms embargo lifted",
+              "Position Turkey as lead mediator in Gaza ceasefire, sidelining Qatar and Egypt"
             ],
             "relationships": {
               "netanyahu": "enemy",

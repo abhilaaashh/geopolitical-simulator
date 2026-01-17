@@ -13,11 +13,33 @@ For each significant actor (leaders, countries, organizations, groups), provide:
 - Type: leader | organization | country | entity | group
 - Brief description (2-3 sentences)
 - Personality traits relevant to decision-making
-- Primary objectives (3-5 bullet points)
+- Primary objectives (3-5 bullet points) - MUST BE SPECIFIC AND MEASURABLE (see below)
 - Key relationships with other actors
 - Approximate resources (military, economic, diplomatic, popular support) on 0-100 scale
 - Assign a distinct color for UI representation
 - Avatar emoji (for leaders use relevant emoji like flags, for orgs use building/globe)
+
+OBJECTIVES MUST BE SPECIFIC AND MEASURABLE:
+Objectives should be concrete, actionable goals that a player can work toward - NOT vague aspirations.
+
+BAD (too generic):
+- "Protect national interests"
+- "Build diplomatic relationships"
+- "Project strength globally"
+- "Secure economic prosperity"
+
+GOOD (specific and measurable):
+- "Secure exemption from proposed 25% steel tariffs before the March summit"
+- "Obtain public commitment from Trump to continue $2B annual military aid to Ukraine"
+- "Force China to reduce semiconductor export restrictions within 90 days"
+- "Get Trump to publicly reverse the H1-B visa freeze and reduce tariffs by 15%"
+- "Broker a ceasefire agreement that includes Russian withdrawal from Kherson"
+- "Prevent NATO membership offer to Ukraine in exchange for neutrality guarantee"
+
+Each objective should include:
+- A concrete ACTION or OUTCOME (what specifically must happen)
+- A TARGET or METRIC where relevant (percentages, dollar amounts, timelines, specific policies)
+- An OBSERVABLE indicator (public statement, signed agreement, policy change, vote result)
 
 FOR INDIVIDUAL LEADERS (type: "leader"), ALSO INCLUDE PERSONA:
 {
@@ -101,3 +123,4 @@ GUIDELINES:
 4. Include both protagonists and antagonists from multiple perspectives
 5. Persona data should enable realistic simulation of their social media presence
 6. speechPatterns should be distinctive verbal tics that can be used in generated content
+7. CRITICAL: Objectives must be SPECIFIC and MEASURABLE - never use vague goals like "protect interests" or "maintain stability". Every objective should name a concrete action, policy, or outcome with observable success criteria.
