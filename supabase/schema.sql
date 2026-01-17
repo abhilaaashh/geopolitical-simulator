@@ -148,6 +148,90 @@ CREATE TRIGGER update_game_sessions_updated_at
   EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================
+-- FUNCTION: Get recent public sessions for feed
+-- Returns recent game sessions with user emails
+-- ============================================
+CREATE OR REPLACE FUNCTION get_recent_public_sessions(session_limit INTEGER DEFAULT 50)
+RETURNS TABLE (
+  session_id UUID,
+  user_email TEXT,
+  title TEXT,
+  scenario_id TEXT,
+  scenario_title TEXT,
+  player_actor_name TEXT,
+  current_turn INTEGER,
+  is_completed BOOLEAN,
+  global_sentiment TEXT,
+  tension_level INTEGER,
+  created_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    gs.id as session_id,
+    u.email as user_email,
+    gs.title,
+    gs.scenario_id,
+    gs.scenario_title,
+    gs.player_actor_name,
+    gs.current_turn,
+    gs.is_completed,
+    (gs.game_state->'worldState'->>'globalSentiment')::TEXT as global_sentiment,
+    (gs.game_state->'worldState'->>'tensionLevel')::INTEGER as tension_level,
+    gs.created_at,
+    gs.updated_at
+  FROM game_sessions gs
+  JOIN auth.users u ON u.id = gs.user_id
+  WHERE gs.current_turn > 0
+  ORDER BY gs.updated_at DESC
+  LIMIT session_limit;
+END;
+$$;
+
+-- ============================================
+-- FUNCTION: Get public session by ID
+-- Returns a single session for public viewing
+-- ============================================
+CREATE OR REPLACE FUNCTION get_public_session(session_uuid UUID)
+RETURNS TABLE (
+  session_id UUID,
+  user_email TEXT,
+  title TEXT,
+  scenario_title TEXT,
+  player_actor_name TEXT,
+  game_state JSONB,
+  current_turn INTEGER,
+  is_completed BOOLEAN,
+  created_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    gs.id as session_id,
+    u.email as user_email,
+    gs.title,
+    gs.scenario_title,
+    gs.player_actor_name,
+    gs.game_state,
+    gs.current_turn,
+    gs.is_completed,
+    gs.created_at,
+    gs.updated_at
+  FROM game_sessions gs
+  JOIN auth.users u ON u.id = gs.user_id
+  WHERE gs.id = session_uuid;
+END;
+$$;
+
+-- ============================================
 -- FUNCTION: Get analytics stats
 -- Returns aggregate statistics for the platform
 -- ============================================

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { User, LogIn, Save, History } from 'lucide-react';
+import { LogIn, Save, History, Globe2 } from 'lucide-react';
+import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useGameStore } from '@/lib/store';
 import { LoginModal } from '@/components/auth/LoginModal';
@@ -47,6 +48,15 @@ export function AppHeader() {
 
             {/* Right side actions */}
             <div className="flex items-center gap-2 sm:gap-3">
+              {/* Explore feed link */}
+              <Link
+                href="/feed"
+                className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-xs sm:text-sm text-gray-300 hover:text-white"
+              >
+                <Globe2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Explore</span>
+              </Link>
+
               {/* Quick save button (when in game and logged in) */}
               {canSave && (
                 <button

@@ -250,3 +250,75 @@ export async function getShareToken(sessionId: string): Promise<string | null> {
 
   return data?.share_token ?? null;
 }
+
+// ============================================
+// PUBLIC FEED
+// ============================================
+
+export async function getRecentPublicSessions(limit: number = 50): Promise<{
+  session_id: string;
+  user_email: string;
+  title: string;
+  scenario_id: string | null;
+  scenario_title: string | null;
+  player_actor_name: string | null;
+  current_turn: number;
+  is_completed: boolean;
+  global_sentiment: string | null;
+  tension_level: number | null;
+  created_at: string;
+  updated_at: string;
+}[]> {
+  const supabase = getSupabaseClient();
+  
+  const { data, error } = await supabase
+    .rpc('get_recent_public_sessions', { session_limit: limit });
+
+  if (error) {
+    console.error('Error fetching public sessions:', error);
+    throw error;
+  }
+
+  return data ?? [];
+}
+
+export async function getPublicSession(sessionId: string): Promise<{
+  session_id: string;
+  user_email: string;
+  title: string;
+  scenario_title: string | null;
+  player_actor_name: string | null;
+  game_state: GameState;
+  current_turn: number;
+  is_completed: boolean;
+  created_at: string;
+  updated_at: string;
+} | null> {
+  const supabase = getSupabaseClient();
+  
+  const { data, error } = await supabase
+    .rpc('get_public_session', { session_uuid: sessionId });
+
+  if (error) {
+    console.error('Error fetching public session:', error);
+    throw error;
+  }
+
+  if (!data || data.length === 0) {
+    return null;
+  }
+
+  const row = data[0];
+  return {
+    session_id: row.session_id,
+    user_email: row.user_email,
+    title: row.title,
+    scenario_title: row.scenario_title,
+    player_actor_name: row.player_actor_name,
+    game_state: row.game_state as unknown as GameState,
+    current_turn: row.current_turn,
+    is_completed: row.is_completed,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  };
+}

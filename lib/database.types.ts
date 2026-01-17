@@ -111,6 +111,38 @@ export type Database = {
           completion_rate: number;
         }[];
       };
+      get_recent_public_sessions: {
+        Args: { session_limit?: number };
+        Returns: {
+          session_id: string;
+          user_email: string;
+          title: string;
+          scenario_id: string | null;
+          scenario_title: string | null;
+          player_actor_name: string | null;
+          current_turn: number;
+          is_completed: boolean;
+          global_sentiment: string | null;
+          tension_level: number | null;
+          created_at: string;
+          updated_at: string;
+        }[];
+      };
+      get_public_session: {
+        Args: { session_uuid: string };
+        Returns: {
+          session_id: string;
+          user_email: string;
+          title: string;
+          scenario_title: string | null;
+          player_actor_name: string | null;
+          game_state: Json;
+          current_turn: number;
+          is_completed: boolean;
+          created_at: string;
+          updated_at: string;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;
@@ -138,3 +170,7 @@ export interface SharedSession extends SharedSessionRow {}
 
 // Analytics types
 export type AnalyticsStats = Database['public']['Functions']['get_analytics_stats']['Returns'][number];
+
+// Public feed types
+export type PublicSessionFeedItem = Database['public']['Functions']['get_recent_public_sessions']['Returns'][number];
+export type PublicSessionDetail = Database['public']['Functions']['get_public_session']['Returns'][number];
