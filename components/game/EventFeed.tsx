@@ -10,6 +10,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import type { GameEvent } from '@/lib/types';
 import { TweetCard, NewsArticleCard, PressReleaseCard } from './media';
+import { SkeletonEventCards } from './SkeletonEventCard';
 
 const TYPE_ICONS = {
   action: <Zap className="w-4 h-4" />,
@@ -153,6 +154,31 @@ function EventCard({ event, actorColor }: { event: GameEvent; actorColor?: strin
   }
 }
 
+// Wrapper for staggered event entry animations
+function StaggeredEventCard({ 
+  event, 
+  actorColor, 
+  delay = 0 
+}: { 
+  event: GameEvent; 
+  actorColor?: string;
+  delay?: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ 
+        duration: 0.4,
+        delay,
+        ease: [0.25, 0.46, 0.45, 0.94] // Custom easing for smooth entry
+      }}
+    >
+      <EventCard event={event} actorColor={actorColor} />
+    </motion.div>
+  );
+}
+
 export function EventFeed() {
   const { events, scenario, isProcessing, playerActorId } = useGameStore();
   const feedRef = useRef<HTMLDivElement>(null);
@@ -160,6 +186,11 @@ export function EventFeed() {
   const [newUpdatesCount, setNewUpdatesCount] = useState(0);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const seenEventsCountRef = useRef<number>(0);
+  
+  // Track which events are "new" (just added after processing completed)
+  const [newEventIds, setNewEventIds] = useState<Set<string>>(new Set());
+  const prevProcessingRef = useRef(isProcessing);
+  const prevEventsLengthRef = useRef(events.length);
 
   // Find the latest player action index
   const latestPlayerActionIndex = events.findLastIndex(e => e.isPlayerAction || e.actorId === playerActorId);
@@ -180,6 +211,29 @@ export function EventFeed() {
       seenEventsCountRef.current = events.length;
     }
   }, [checkIfAtBottom, events.length]);
+
+  // Track when processing completes and mark new events for staggered animation
+  useEffect(() => {
+    const wasProcessing = prevProcessingRef.current;
+    const prevLength = prevEventsLengthRef.current;
+    
+    // When processing just finished and we have new events
+    if (wasProcessing && !isProcessing && events.length > prevLength) {
+      const newEvents = events.slice(prevLength);
+      const ids = new Set(newEvents.map(e => e.id));
+      setNewEventIds(ids);
+      
+      // Clear the "new" status after animations complete
+      const timeout = setTimeout(() => {
+        setNewEventIds(new Set());
+      }, 500 + newEvents.length * 150); // Base delay + stagger time
+      
+      return () => clearTimeout(timeout);
+    }
+    
+    prevProcessingRef.current = isProcessing;
+    prevEventsLengthRef.current = events.length;
+  }, [isProcessing, events]);
 
   // Track new events and update count
   useEffect(() => {
@@ -238,31 +292,33 @@ export function EventFeed() {
         onScroll={handleScroll}
       >
         <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4">
-          {events.map((event) => (
-            <EventCard 
-              key={event.id} 
-              event={event} 
-              actorColor={getActorColor(event.actorId)}
-            />
-          ))}
+          {events.map((event, index) => {
+            const isNewEvent = newEventIds.has(event.id);
+            // Calculate stagger index relative to other new events
+            const newEventsList = events.filter(e => newEventIds.has(e.id));
+            const staggerIndex = newEventsList.findIndex(e => e.id === event.id);
+            const delay = isNewEvent ? staggerIndex * 0.12 : 0;
+            
+            return isNewEvent ? (
+              <StaggeredEventCard
+                key={event.id}
+                event={event}
+                actorColor={getActorColor(event.actorId)}
+                delay={delay}
+              />
+            ) : (
+              <EventCard 
+                key={event.id} 
+                event={event} 
+                actorColor={getActorColor(event.actorId)}
+              />
+            );
+          })}
           
-          {isProcessing && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="glass-card p-3 sm:p-5"
-            >
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-game-accent/20 flex items-center justify-center">
-                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-game-accent border-t-transparent rounded-full animate-spin" />
-                </div>
-                <div>
-                  <p className="font-medium text-sm sm:text-base">Processing world events...</p>
-                  <p className="text-xs sm:text-sm text-gray-500">The world is responding to your action</p>
-                </div>
-              </div>
-            </motion.div>
-          )}
+          {/* Skeleton cards during processing */}
+          <AnimatePresence>
+            {isProcessing && <SkeletonEventCards count={3} />}
+          </AnimatePresence>
         </div>
       </div>
 

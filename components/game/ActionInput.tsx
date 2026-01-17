@@ -4,11 +4,40 @@ import { useState } from 'react';
 import { useGameStore } from '@/lib/store';
 import { 
   Send, Loader2, MessageSquare, Shield, Coins, 
-  Globe, FileText, Eye, Phone, Twitter, SkipForward
+  Globe, FileText, Eye, Phone, Twitter, SkipForward,
+  Check, Circle
 } from 'lucide-react';
-import type { GameEvent, ActionType, MediaType } from '@/lib/types';
+import type { GameEvent, ActionType, MediaType, SimulationResponse } from '@/lib/types';
 import { generateId } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+
+// Progress step configuration
+interface ProgressStep {
+  id: string;
+  label: string;
+  shortLabel: string;
+}
+
+const SIMULATION_STEPS: ProgressStep[] = [
+  { id: 'analyzing', label: 'Analyzing action', shortLabel: 'Analyze' },
+  { id: 'generating', label: 'Generating reactions', shortLabel: 'React' },
+  { id: 'reactions', label: 'Simulating responses', shortLabel: 'Simulate' },
+  { id: 'worldstate', label: 'Updating world', shortLabel: 'Update' },
+];
+
+const SKIP_STEPS: ProgressStep[] = [
+  { id: 'observing', label: 'Observing world', shortLabel: 'Observe' },
+  { id: 'events', label: 'Events unfolding', shortLabel: 'Events' },
+  { id: 'worldstate', label: 'Updating world', shortLabel: 'Update' },
+];
+
+interface ProgressState {
+  step: string;
+  stepIndex: number;
+  totalSteps: number;
+  message: string;
+  progress: number;
+}
 
 // Action type configuration
 const ACTION_TYPES: {
@@ -77,8 +106,154 @@ const ACTION_TYPES: {
   },
 ];
 
+/**
+ * Process SSE stream from simulation API
+ */
+async function processSSEStream(
+  response: Response,
+  onProgress: (state: ProgressState) => void,
+  onComplete: (data: SimulationResponse) => void,
+  onError: (error: string) => void
+) {
+  const reader = response.body?.getReader();
+  if (!reader) {
+    onError('No response stream available');
+    return;
+  }
+
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      
+      // Process complete SSE events
+      const lines = buffer.split('\n\n');
+      buffer = lines.pop() || ''; // Keep incomplete event in buffer
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        
+        try {
+          const jsonStr = line.slice(6); // Remove 'data: ' prefix
+          const event = JSON.parse(jsonStr);
+          
+          if (event.type === 'progress') {
+            onProgress({
+              step: event.step || 'processing',
+              stepIndex: event.stepIndex ?? 0,
+              totalSteps: event.totalSteps ?? 4,
+              message: event.message,
+              progress: event.progress ?? 0,
+            });
+          } else if (event.type === 'complete') {
+            onComplete(event.data);
+          } else if (event.type === 'error') {
+            onError(event.message);
+          }
+        } catch (parseError) {
+          console.warn('Failed to parse SSE event:', line);
+        }
+      }
+    }
+  } catch (error) {
+    onError('Stream reading error');
+  }
+}
+
+/**
+ * Step Progress Indicator Component
+ */
+function StepProgressIndicator({ 
+  progressState, 
+  steps 
+}: { 
+  progressState: ProgressState; 
+  steps: ProgressStep[];
+}) {
+  return (
+    <motion.div 
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+      className="mb-3"
+    >
+      {/* Progress bar */}
+      <div className="h-1 bg-game-border/50 rounded-full overflow-hidden mb-2">
+        <motion.div 
+          className="h-full bg-gradient-to-r from-game-accent to-purple-500"
+          initial={{ width: 0 }}
+          animate={{ width: `${progressState.progress}%` }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
+        />
+      </div>
+      
+      {/* Step indicators */}
+      <div className="flex items-center justify-between gap-1">
+        {steps.map((step, index) => {
+          const isComplete = index < progressState.stepIndex;
+          const isCurrent = index === progressState.stepIndex;
+          const isPending = index > progressState.stepIndex;
+          
+          return (
+            <div key={step.id} className="flex-1 flex items-center">
+              <div className="flex items-center gap-1.5 min-w-0">
+                {/* Step icon */}
+                <div className={`
+                  w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300
+                  ${isComplete ? 'bg-green-500/20 text-green-400' : ''}
+                  ${isCurrent ? 'bg-game-accent/30 text-game-accent ring-2 ring-game-accent/50' : ''}
+                  ${isPending ? 'bg-game-border/30 text-gray-600' : ''}
+                `}>
+                  {isComplete ? (
+                    <Check className="w-3 h-3" />
+                  ) : isCurrent ? (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                    >
+                      <Loader2 className="w-3 h-3" />
+                    </motion.div>
+                  ) : (
+                    <Circle className="w-2 h-2" />
+                  )}
+                </div>
+                
+                {/* Step label */}
+                <span className={`
+                  text-[10px] sm:text-xs truncate transition-colors duration-300
+                  ${isComplete ? 'text-green-400' : ''}
+                  ${isCurrent ? 'text-game-accent font-medium' : ''}
+                  ${isPending ? 'text-gray-600' : ''}
+                `}>
+                  <span className="hidden sm:inline">{step.label}</span>
+                  <span className="sm:hidden">{step.shortLabel}</span>
+                </span>
+              </div>
+              
+              {/* Connector line */}
+              {index < steps.length - 1 && (
+                <div className={`
+                  flex-1 h-px mx-2 transition-colors duration-300
+                  ${isComplete ? 'bg-green-500/50' : 'bg-game-border/30'}
+                `} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
 export function ActionInput() {
   const [action, setAction] = useState('');
+  const [progressState, setProgressState] = useState<ProgressState | null>(null);
+  const [isSkipping, setIsSkipping] = useState(false);
   
   const { 
     scenario, 
@@ -109,10 +284,50 @@ export function ActionInput() {
     return ACTION_TYPES.find(a => a.type === actionType)?.mediaType;
   };
 
+  /**
+   * Handle successful simulation response (from either streaming or non-streaming)
+   */
+  const handleSimulationSuccess = (data: SimulationResponse) => {
+    // Add response events
+    if (data.events && data.events.length > 0) {
+      const formattedEvents: GameEvent[] = data.events.map((e: any) => ({
+        ...e,
+        id: generateId(),
+        timestamp: new Date(),
+        turn: currentTurn,
+      }));
+      addEvents(formattedEvents);
+    }
+
+    // Update world state
+    if (data.worldStateUpdate) {
+      updateWorldState(data.worldStateUpdate);
+    }
+
+    // Update goal progress
+    if (data.goalProgressUpdate && playerGoal) {
+      updateGoalProgress(
+        data.goalProgressUpdate.progress,
+        data.goalProgressUpdate.evaluation,
+        currentTurn
+      );
+    }
+
+    nextTurn();
+  };
+
   const handleSubmit = async () => {
     if (!action.trim() || isProcessing || !playerActor) return;
 
     setProcessing(true);
+    setIsSkipping(false);
+    setProgressState({
+      step: 'analyzing',
+      stepIndex: 0,
+      totalSteps: 4,
+      message: 'Preparing action...',
+      progress: 5,
+    });
 
     // Determine media type based on action type
     const mediaType = getMediaTypeForAction(selectedActionType);
@@ -124,7 +339,7 @@ export function ActionInput() {
       verified: playerActor.persona.verified ?? true,
     } : undefined;
 
-    // Add player action event immediately
+    // Add player action event immediately (optimistic UI)
     const playerEvent: GameEvent = {
       id: generateId(),
       timestamp: new Date(),
@@ -144,9 +359,13 @@ export function ActionInput() {
     setAction('');
 
     try {
+      // Try streaming first
       const response = await fetch('/api/simulate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'text/event-stream',
+        },
         body: JSON.stringify({
           gameState: {
             scenario,
@@ -161,38 +380,48 @@ export function ActionInput() {
         }),
       });
 
-      if (response.ok) {
+      if (!response.ok) {
+        throw new Error('Simulation request failed');
+      }
+
+      // Check if response is SSE stream
+      const contentType = response.headers.get('content-type') || '';
+      
+      if (contentType.includes('text/event-stream')) {
+        // Handle streaming response
+        await processSSEStream(
+          response,
+          (state) => {
+            setProgressState(state);
+          },
+          (data) => {
+            setProgressState(null);
+            handleSimulationSuccess(data);
+          },
+          (error) => {
+            setProgressState(null);
+            console.error('Stream error:', error);
+            addEvent({
+              id: generateId(),
+              timestamp: new Date(),
+              turn: currentTurn,
+              type: 'system',
+              actorId: 'system',
+              actorName: 'System',
+              content: 'An error occurred while processing your action. Please try again.',
+              sentiment: 'negative',
+            });
+          }
+        );
+      } else {
+        // Fallback: Handle regular JSON response
         const data = await response.json();
-        
-        // Add response events
-        if (data.events && data.events.length > 0) {
-          const formattedEvents: GameEvent[] = data.events.map((e: any) => ({
-            ...e,
-            id: generateId(),
-            timestamp: new Date(),
-            turn: currentTurn,
-          }));
-          addEvents(formattedEvents);
-        }
-
-        // Update world state
-        if (data.worldStateUpdate) {
-          updateWorldState(data.worldStateUpdate);
-        }
-
-        // Update goal progress
-        if (data.goalProgressUpdate && playerGoal) {
-          updateGoalProgress(
-            data.goalProgressUpdate.progress,
-            data.goalProgressUpdate.evaluation,
-            currentTurn
-          );
-        }
-
-        nextTurn();
+        setProgressState(null);
+        handleSimulationSuccess(data);
       }
     } catch (err) {
       console.error('Simulation error:', err);
+      setProgressState(null);
       addEvent({
         id: generateId(),
         timestamp: new Date(),
@@ -205,6 +434,7 @@ export function ActionInput() {
       });
     } finally {
       setProcessing(false);
+      setProgressState(null);
     }
   };
 
@@ -219,6 +449,14 @@ export function ActionInput() {
     if (isProcessing || !playerActor) return;
 
     setProcessing(true);
+    setIsSkipping(true);
+    setProgressState({
+      step: 'observing',
+      stepIndex: 0,
+      totalSteps: 3,
+      message: 'Observing world events...',
+      progress: 5,
+    });
 
     // Add a system event indicating the player is observing
     const observeEvent: GameEvent = {
@@ -235,9 +473,13 @@ export function ActionInput() {
     addEvent(observeEvent);
 
     try {
+      // Try streaming first
       const response = await fetch('/api/simulate/skip', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'text/event-stream',
+        },
         body: JSON.stringify({
           gameState: {
             scenario,
@@ -250,38 +492,47 @@ export function ActionInput() {
         }),
       });
 
-      if (response.ok) {
+      if (!response.ok) {
+        throw new Error('Skip turn request failed');
+      }
+
+      const contentType = response.headers.get('content-type') || '';
+      
+      if (contentType.includes('text/event-stream')) {
+        // Handle streaming response
+        await processSSEStream(
+          response,
+          (state) => {
+            setProgressState(state);
+          },
+          (data) => {
+            setProgressState(null);
+            handleSimulationSuccess(data);
+          },
+          (error) => {
+            setProgressState(null);
+            console.error('Stream error:', error);
+            addEvent({
+              id: generateId(),
+              timestamp: new Date(),
+              turn: currentTurn,
+              type: 'system',
+              actorId: 'system',
+              actorName: 'System',
+              content: 'An error occurred while skipping the turn. Please try again.',
+              sentiment: 'negative',
+            });
+          }
+        );
+      } else {
+        // Fallback: Handle regular JSON response
         const data = await response.json();
-        
-        // Add response events
-        if (data.events && data.events.length > 0) {
-          const formattedEvents: GameEvent[] = data.events.map((e: any) => ({
-            ...e,
-            id: generateId(),
-            timestamp: new Date(),
-            turn: currentTurn,
-          }));
-          addEvents(formattedEvents);
-        }
-
-        // Update world state
-        if (data.worldStateUpdate) {
-          updateWorldState(data.worldStateUpdate);
-        }
-
-        // Update goal progress (for skip, progress might change due to world events)
-        if (data.goalProgressUpdate && playerGoal) {
-          updateGoalProgress(
-            data.goalProgressUpdate.progress,
-            data.goalProgressUpdate.evaluation,
-            currentTurn
-          );
-        }
-
-        nextTurn();
+        setProgressState(null);
+        handleSimulationSuccess(data);
       }
     } catch (err) {
       console.error('Skip turn error:', err);
+      setProgressState(null);
       addEvent({
         id: generateId(),
         timestamp: new Date(),
@@ -294,6 +545,8 @@ export function ActionInput() {
       });
     } finally {
       setProcessing(false);
+      setProgressState(null);
+      setIsSkipping(false);
     }
   };
 
@@ -304,8 +557,21 @@ export function ActionInput() {
     return `As ${playerActor?.name}, what do you do? (Select an action type above or just type)`;
   };
 
+  // Select the appropriate steps based on action type
+  const currentSteps = isSkipping ? SKIP_STEPS : SIMULATION_STEPS;
+
   return (
     <div className="glass-card rounded-none border-x-0 border-b-0 p-3 sm:p-4">
+      {/* Step-based progress indicator */}
+      <AnimatePresence>
+        {progressState && (
+          <StepProgressIndicator 
+            progressState={progressState} 
+            steps={currentSteps}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Action Type Selector - horizontally scrollable on mobile */}
       <div className="flex gap-2 mb-3 overflow-x-auto pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:flex-wrap sm:overflow-visible scrollbar-hide">
         {ACTION_TYPES.map((actionType) => (

@@ -7,143 +7,258 @@
       "query": "Trump second term 2025 - US foreign policy, Ukraine negotiations, China trade tensions",
       "region": "Global",
       "thumbnail": "🇺🇸",
+      "fullScenario": {
+        "id": "trump-second-term",
+        "title": "Trump's Second Term",
+        "description": "Navigate the turbulent waters of international diplomacy as key figures in the Trump administration's second term.",
+        "region": "Global",
+        "timeframe": {
+          "start": "2025-01-20",
+          "end": null
+        },
+        "backgroundContext": "Donald Trump has won the 2024 election and returned to the White House as the 47th President. The world faces a pivotal moment: the Ukraine-Russia conflict continues into its third year, US-China tensions over trade and Taiwan remain elevated, and America's traditional alliances are being questioned. Trump's 'America First' foreign policy and unconventional diplomatic style promise dramatic shifts in global power dynamics.",
+        "currentStatus": "Trump has just been inaugurated and is assembling his team. He has promised to end the Ukraine war 'within 24 hours' and is preparing for a series of high-stakes negotiations. Global markets are volatile as the world waits to see what moves the new administration will make.",
+        "keyIssues": [
+          "Ukraine-Russia conflict resolution",
+          "US-China trade and technology competition",
+          "NATO alliance commitments",
+          "Iran nuclear program",
+          "Immigration and border security",
+          "Domestic political polarization"
+        ],
+        "actors": [
+          {
+            "id": "trump",
+            "name": "Donald Trump",
+            "type": "leader",
+            "description": "45th and 47th President of the United States. Known for unconventional diplomacy, direct communication, and 'America First' policies.",
+            "personality": "Bold, unpredictable, media-savvy. Makes decisions based on personal relationships and perceived strength. Values loyalty above all.",
+            "objectives": [
+              "Secure a 'great deal' on Ukraine",
+              "Renegotiate trade with China",
+              "Project American strength globally",
+              "Build legacy as dealmaker president"
+            ],
+            "relationships": {
+              "zelensky": "complicated",
+              "putin": "complicated",
+              "xi": "enemy",
+              "eu": "complicated"
+            },
+            "resources": {
+              "military": 95,
+              "economic": 85,
+              "diplomatic": 70,
+              "popular": 48
+            },
+            "color": "#DC2626",
+            "avatar": "🦅",
+            "persona": {
+              "socialHandle": "@realDonaldTrump",
+              "platform": "truth_social",
+              "speechPatterns": [
+                "Believe me",
+                "Many people are saying",
+                "Nobody knows more about X than me",
+                "It's going to be tremendous",
+                "Fake news"
+              ],
+              "catchphrases": [
+                "Make America Great Again",
+                "We're going to win so much",
+                "The likes of which nobody has ever seen"
+              ],
+              "communicationStyle": "bombastic",
+              "mediaPresence": "high",
+              "controversyTolerance": 95,
+              "verified": true
+            }
+          },
+          {
+            "id": "zelensky",
+            "name": "Volodymyr Zelensky",
+            "type": "leader",
+            "description": "President of Ukraine since 2019. Former comedian turned wartime leader, symbol of Ukrainian resistance.",
+            "personality": "Charismatic, resilient, skilled communicator. Appeals to emotion and shared values. Refuses to back down under pressure.",
+            "objectives": [
+              "Preserve Ukrainian sovereignty",
+              "Secure continued Western support",
+              "Negotiate from position of strength",
+              "Liberate occupied territories"
+            ],
+            "relationships": {
+              "trump": "complicated",
+              "putin": "enemy",
+              "eu": "ally",
+              "nato": "ally"
+            },
+            "resources": {
+              "military": 55,
+              "economic": 30,
+              "diplomatic": 75,
+              "popular": 70
+            },
+            "color": "#2563EB",
+            "avatar": "🇺🇦",
+            "persona": {
+              "socialHandle": "@ZelenskyyUa",
+              "platform": "twitter",
+              "speechPatterns": [
+                "Glory to Ukraine",
+                "We need",
+                "The world is watching",
+                "We will not give up"
+              ],
+              "catchphrases": [
+                "I need ammunition, not a ride",
+                "Slava Ukraini"
+              ],
+              "communicationStyle": "folksy",
+              "mediaPresence": "high",
+              "controversyTolerance": 60,
+              "verified": true
+            }
+          },
+          {
+            "id": "putin",
+            "name": "Vladimir Putin",
+            "type": "leader",
+            "description": "President of Russia. Former KGB officer, has ruled Russia for over two decades. Architect of the Ukraine invasion.",
+            "personality": "Calculating, patient, views geopolitics as zero-sum game. Projects strength, never admits weakness. Master of strategic ambiguity.",
+            "objectives": [
+              "Secure recognition of territorial gains",
+              "Prevent NATO expansion",
+              "Divide Western alliance",
+              "Maintain domestic power"
+            ],
+            "relationships": {
+              "trump": "complicated",
+              "zelensky": "enemy",
+              "xi": "ally",
+              "eu": "enemy"
+            },
+            "resources": {
+              "military": 80,
+              "economic": 50,
+              "diplomatic": 45,
+              "popular": 65
+            },
+            "color": "#991B1B",
+            "avatar": "🇷🇺",
+            "persona": {
+              "socialHandle": "@KremlinRussia_E",
+              "platform": "telegram",
+              "speechPatterns": [
+                "As you know",
+                "Our Western partners",
+                "Historic Russian lands",
+                "Special military operation"
+              ],
+              "catchphrases": [
+                "Denazification",
+                "Russia's legitimate security interests"
+              ],
+              "communicationStyle": "cryptic",
+              "mediaPresence": "medium",
+              "controversyTolerance": 80,
+              "verified": true
+            }
+          },
+          {
+            "id": "xi",
+            "name": "Xi Jinping",
+            "type": "leader",
+            "description": "President of China and General Secretary of the CCP. Most powerful Chinese leader since Mao.",
+            "personality": "Patient strategist, nationalist, believes in China's inevitable rise. Avoids direct confrontation but pursues long-term advantage.",
+            "objectives": [
+              "Reunify Taiwan",
+              "Achieve technological independence",
+              "Expand global influence",
+              "Counter US containment"
+            ],
+            "relationships": {
+              "trump": "enemy",
+              "putin": "ally",
+              "zelensky": "neutral"
+            },
+            "resources": {
+              "military": 85,
+              "economic": 90,
+              "diplomatic": 70,
+              "popular": 75
+            },
+            "color": "#B91C1C",
+            "avatar": "🇨🇳",
+            "persona": {
+              "socialHandle": "@MFA_China",
+              "platform": "weibo",
+              "speechPatterns": [
+                "Mutual respect",
+                "Win-win cooperation",
+                "Chinese dream"
+              ],
+              "catchphrases": [
+                "The great rejuvenation of the Chinese nation",
+                "Community with a shared future"
+              ],
+              "communicationStyle": "diplomatic",
+              "mediaPresence": "low",
+              "controversyTolerance": 30,
+              "verified": true
+            }
+          }
+        ],
+        "milestones": [
+          {
+            "id": "inauguration",
+            "date": "2025-01-20",
+            "title": "Trump Inauguration",
+            "description": "Donald Trump is inaugurated as the 47th President of the United States, promising to end the Ukraine war 'within 24 hours'.",
+            "significance": "critical",
+            "actorsInvolved": ["trump"]
+          },
+          {
+            "id": "first-call",
+            "date": "2025-01-25",
+            "title": "First Calls",
+            "description": "Trump makes his first calls to Zelensky and Putin, setting the stage for negotiations.",
+            "significance": "major",
+            "actorsInvolved": ["trump", "zelensky", "putin"]
+          },
+          {
+            "id": "tariff-threat",
+            "date": "2025-02-01",
+            "title": "China Tariff Threats",
+            "description": "Trump threatens 60% tariffs on all Chinese goods unless trade imbalances are addressed.",
+            "significance": "major",
+            "actorsInvolved": ["trump", "xi"]
+          }
+        ]
+      },
       "actors": [
         {
           "id": "trump",
           "name": "Donald Trump",
           "type": "leader",
-          "description": "45th and 47th President of the United States. Known for unconventional diplomacy, direct communication, and 'America First' policies.",
-          "personality": "Bold, unpredictable, media-savvy. Makes decisions based on personal relationships and perceived strength. Values loyalty above all.",
-          "objectives": [
-            "Secure a 'great deal' on Ukraine",
-            "Renegotiate trade with China",
-            "Project American strength globally",
-            "Build legacy as dealmaker president"
-          ],
-          "relationships": {
-            "zelensky": "complicated",
-            "putin": "complicated",
-            "xi": "enemy",
-            "eu": "complicated"
-          },
-          "resources": {
-            "military": 95,
-            "economic": 85,
-            "diplomatic": 70,
-            "popular": 48
-          },
-          "color": "#DC2626",
-          "avatar": "🦅",
-          "persona": {
-            "socialHandle": "@realDonaldTrump",
-            "platform": "truth_social",
-            "speechPatterns": [
-              "Believe me",
-              "Many people are saying",
-              "Nobody knows more about X than me",
-              "It's going to be tremendous",
-              "Fake news"
-            ],
-            "catchphrases": [
-              "Make America Great Again",
-              "We're going to win so much",
-              "The likes of which nobody has ever seen"
-            ],
-            "communicationStyle": "bombastic",
-            "mediaPresence": "high",
-            "controversyTolerance": 95,
-            "verified": true
-          }
+          "avatar": "🦅"
         },
         {
           "id": "zelensky",
           "name": "Volodymyr Zelensky",
           "type": "leader",
-          "description": "President of Ukraine since 2019. Former comedian turned wartime leader, symbol of Ukrainian resistance.",
-          "personality": "Charismatic, resilient, skilled communicator. Appeals to emotion and shared values. Refuses to back down under pressure.",
-          "objectives": [
-            "Preserve Ukrainian sovereignty",
-            "Secure continued Western support",
-            "Negotiate from position of strength",
-            "Liberate occupied territories"
-          ],
-          "relationships": {
-            "trump": "complicated",
-            "putin": "enemy",
-            "eu": "ally",
-            "nato": "ally"
-          },
-          "resources": {
-            "military": 55,
-            "economic": 30,
-            "diplomatic": 75,
-            "popular": 70
-          },
-          "color": "#2563EB",
-          "avatar": "🇺🇦",
-          "persona": {
-            "socialHandle": "@ZelenskyyUa",
-            "platform": "twitter",
-            "speechPatterns": [
-              "Glory to Ukraine",
-              "We need",
-              "The world is watching",
-              "We will not give up"
-            ],
-            "catchphrases": [
-              "I need ammunition, not a ride",
-              "Slava Ukraini"
-            ],
-            "communicationStyle": "folksy",
-            "mediaPresence": "high",
-            "controversyTolerance": 60,
-            "verified": true
-          }
+          "avatar": "🇺🇦"
         },
         {
           "id": "putin",
           "name": "Vladimir Putin",
           "type": "leader",
-          "description": "President of Russia. Former KGB officer, has ruled Russia for over two decades. Architect of the Ukraine invasion.",
-          "personality": "Calculating, patient, views geopolitics as zero-sum game. Projects strength, never admits weakness. Master of strategic ambiguity.",
-          "objectives": [
-            "Secure recognition of territorial gains",
-            "Prevent NATO expansion",
-            "Divide Western alliance",
-            "Maintain domestic power"
-          ],
-          "relationships": {
-            "trump": "complicated",
-            "zelensky": "enemy",
-            "xi": "ally",
-            "eu": "enemy"
-          },
-          "resources": {
-            "military": 80,
-            "economic": 50,
-            "diplomatic": 45,
-            "popular": 65
-          },
-          "color": "#991B1B",
-          "avatar": "🇷🇺",
-          "persona": {
-            "socialHandle": "@KremlinRussia_E",
-            "platform": "telegram",
-            "speechPatterns": [
-              "As you know",
-              "Our Western partners",
-              "Historic Russian lands",
-              "Special military operation"
-            ],
-            "catchphrases": [
-              "Denazification",
-              "Russia's legitimate security interests"
-            ],
-            "communicationStyle": "cryptic",
-            "mediaPresence": "medium",
-            "controversyTolerance": 80,
-            "verified": true
-          }
+          "avatar": "🇷🇺"
+        },
+        {
+          "id": "xi",
+          "name": "Xi Jinping",
+          "type": "leader",
+          "avatar": "🇨🇳"
         }
       ],
       "milestones": [
@@ -151,17 +266,8 @@
           "id": "inauguration",
           "date": "2025-01-20",
           "title": "Trump Inauguration",
-          "description": "Donald Trump is inaugurated as the 47th President of the United States, promising to end the Ukraine war 'within 24 hours'.",
-          "significance": "critical",
-          "actorsInvolved": ["trump"]
-        },
-        {
-          "id": "first-call",
-          "date": "2025-01-25",
-          "title": "First Calls",
-          "description": "Trump makes his first calls to Zelensky and Putin, setting the stage for negotiations.",
-          "significance": "major",
-          "actorsInvolved": ["trump", "zelensky", "putin"]
+          "description": "Donald Trump is inaugurated as the 47th President of the United States.",
+          "significance": "critical"
         }
       ]
     },
@@ -172,183 +278,255 @@
       "query": "Tech industry 2025 - AI race, OpenAI, Tesla, Meta, Microsoft, X Twitter",
       "region": "Global (Tech Industry)",
       "thumbnail": "🤖",
+      "fullScenario": {
+        "id": "tech-titans",
+        "title": "Tech Titans",
+        "description": "The battle for AI supremacy, social media dominance, and the future of technology.",
+        "region": "Global (Tech Industry)",
+        "timeframe": {
+          "start": "2025-01-01",
+          "end": null
+        },
+        "backgroundContext": "The AI arms race has reached fever pitch. OpenAI's partnership with Microsoft has put them at the forefront, but Meta, Google, and Elon Musk's xAI are racing to catch up. Meanwhile, social media platforms are evolving rapidly, with X under Musk competing against Zuckerberg's Threads. Government regulation looms as AI capabilities grow increasingly powerful and society grapples with the implications.",
+        "currentStatus": "GPT-5 rumors are swirling as OpenAI prepares its next major release. Musk's xAI has gained traction with Grok, while Meta's open-source Llama models challenge the closed-source paradigm. Antitrust investigations threaten multiple players.",
+        "keyIssues": [
+          "AI safety and alignment",
+          "Compute resource competition",
+          "Regulatory compliance",
+          "Open vs closed source AI",
+          "Social media platform competition",
+          "Talent acquisition wars"
+        ],
+        "actors": [
+          {
+            "id": "musk",
+            "name": "Elon Musk",
+            "type": "leader",
+            "description": "CEO of Tesla, SpaceX, and owner of X. World's richest person. Controversial figure reshaping multiple industries.",
+            "personality": "Visionary, provocative, impulsive on social media. Makes bold moves, thrives on controversy. Sees himself as humanity's savior.",
+            "objectives": [
+              "Make X profitable",
+              "Advance AI through xAI",
+              "Maintain Tesla dominance",
+              "Colonize Mars",
+              "Maximize influence"
+            ],
+            "relationships": {
+              "altman": "enemy",
+              "zuckerberg": "enemy",
+              "nadella": "complicated"
+            },
+            "resources": {
+              "military": 0,
+              "economic": 95,
+              "diplomatic": 60,
+              "popular": 55
+            },
+            "color": "#000000",
+            "avatar": "🚀",
+            "persona": {
+              "socialHandle": "@elonmusk",
+              "platform": "twitter",
+              "speechPatterns": [
+                "This is",
+                "Interesting",
+                "🔥",
+                "The thing is"
+              ],
+              "catchphrases": [
+                "To the moon",
+                "Making life multiplanetary",
+                "The most entertaining outcome is the most likely"
+              ],
+              "communicationStyle": "bombastic",
+              "mediaPresence": "high",
+              "controversyTolerance": 90,
+              "verified": true
+            }
+          },
+          {
+            "id": "altman",
+            "name": "Sam Altman",
+            "type": "leader",
+            "description": "CEO of OpenAI. Young tech mogul leading the AI revolution. Survived boardroom coup, emerged stronger.",
+            "personality": "Diplomatic yet ambitious. Positions himself as responsible AI steward while aggressively expanding capabilities.",
+            "objectives": [
+              "Maintain OpenAI's AI leadership",
+              "Secure compute resources",
+              "Navigate AI regulation",
+              "Build AGI safely",
+              "Counter competition"
+            ],
+            "relationships": {
+              "musk": "enemy",
+              "nadella": "ally",
+              "zuckerberg": "enemy"
+            },
+            "resources": {
+              "military": 0,
+              "economic": 80,
+              "diplomatic": 75,
+              "popular": 50
+            },
+            "color": "#10B981",
+            "avatar": "🧠",
+            "persona": {
+              "socialHandle": "@sama",
+              "platform": "twitter",
+              "speechPatterns": [
+                "I think",
+                "The thing I've learned",
+                "We're trying to"
+              ],
+              "catchphrases": [
+                "AGI is coming",
+                "We have to get this right"
+              ],
+              "communicationStyle": "diplomatic",
+              "mediaPresence": "medium",
+              "controversyTolerance": 40,
+              "verified": true
+            }
+          },
+          {
+            "id": "zuckerberg",
+            "name": "Mark Zuckerberg",
+            "type": "leader",
+            "description": "CEO of Meta. Pivoted from social media to metaverse to AI. Attempting reputation rehabilitation.",
+            "personality": "Analytical, competitive, increasingly bold. Learning to be more human in public. Driven by fear of irrelevance.",
+            "objectives": [
+              "Make Meta AI competitive",
+              "Revive metaverse vision",
+              "Maintain social media dominance",
+              "Improve public image",
+              "Beat Elon"
+            ],
+            "relationships": {
+              "musk": "enemy",
+              "altman": "complicated",
+              "nadella": "neutral"
+            },
+            "resources": {
+              "military": 0,
+              "economic": 90,
+              "diplomatic": 50,
+              "popular": 35
+            },
+            "color": "#3B82F6",
+            "avatar": "👁️",
+            "persona": {
+              "socialHandle": "@zuck",
+              "platform": "threads",
+              "speechPatterns": [
+                "So",
+                "I mean",
+                "The way I think about it"
+              ],
+              "catchphrases": [
+                "Move fast",
+                "The metaverse"
+              ],
+              "communicationStyle": "academic",
+              "mediaPresence": "medium",
+              "controversyTolerance": 30,
+              "verified": true
+            }
+          },
+          {
+            "id": "nadella",
+            "name": "Satya Nadella",
+            "type": "leader",
+            "description": "CEO of Microsoft. Transformed Microsoft through cloud and AI investments. Key OpenAI partner.",
+            "personality": "Calm, strategic, empathetic leader. Plays the long game. Avoids unnecessary conflicts.",
+            "objectives": [
+              "Win enterprise AI market",
+              "Strengthen OpenAI partnership",
+              "Maintain cloud leadership",
+              "Navigate antitrust concerns"
+            ],
+            "relationships": {
+              "altman": "ally",
+              "musk": "neutral",
+              "zuckerberg": "neutral"
+            },
+            "resources": {
+              "military": 0,
+              "economic": 95,
+              "diplomatic": 85,
+              "popular": 60
+            },
+            "color": "#7C3AED",
+            "avatar": "☁️",
+            "persona": {
+              "socialHandle": "@satyanadella",
+              "platform": "twitter",
+              "speechPatterns": [
+                "What excites me",
+                "We believe",
+                "The opportunity"
+              ],
+              "catchphrases": [
+                "Hit refresh",
+                "Growth mindset"
+              ],
+              "communicationStyle": "diplomatic",
+              "mediaPresence": "low",
+              "controversyTolerance": 15,
+              "verified": true
+            }
+          }
+        ],
+        "milestones": [
+          {
+            "id": "gpt5",
+            "date": "2025-06-01",
+            "title": "GPT-5 Release",
+            "description": "OpenAI releases GPT-5, claiming major advances toward AGI capabilities.",
+            "significance": "critical",
+            "actorsInvolved": ["altman", "nadella"]
+          },
+          {
+            "id": "cage-match",
+            "date": "2025-03-15",
+            "title": "The Cage Match",
+            "description": "Musk and Zuckerberg's long-teased fight finally happens, becoming the most-watched event in streaming history.",
+            "significance": "major",
+            "actorsInvolved": ["musk", "zuckerberg"]
+          },
+          {
+            "id": "eu-ai-act",
+            "date": "2025-02-01",
+            "title": "EU AI Act Enforcement",
+            "description": "The EU AI Act comes into full effect, forcing companies to comply with strict new regulations.",
+            "significance": "major",
+            "actorsInvolved": ["altman", "musk", "zuckerberg", "nadella"]
+          }
+        ]
+      },
       "actors": [
         {
           "id": "musk",
           "name": "Elon Musk",
           "type": "leader",
-          "description": "CEO of Tesla, SpaceX, and owner of X. World's richest person. Controversial figure reshaping multiple industries.",
-          "personality": "Visionary, provocative, impulsive on social media. Makes bold moves, thrives on controversy. Sees himself as humanity's savior.",
-          "objectives": [
-            "Make X profitable",
-            "Advance AI through xAI",
-            "Maintain Tesla dominance",
-            "Colonize Mars",
-            "Maximize influence"
-          ],
-          "relationships": {
-            "altman": "enemy",
-            "zuckerberg": "enemy",
-            "nadella": "complicated"
-          },
-          "resources": {
-            "military": 0,
-            "economic": 95,
-            "diplomatic": 60,
-            "popular": 55
-          },
-          "color": "#000000",
-          "avatar": "🚀",
-          "persona": {
-            "socialHandle": "@elonmusk",
-            "platform": "twitter",
-            "speechPatterns": [
-              "This is",
-              "Interesting",
-              "🔥",
-              "The thing is"
-            ],
-            "catchphrases": [
-              "To the moon",
-              "Making life multiplanetary",
-              "The most entertaining outcome is the most likely"
-            ],
-            "communicationStyle": "bombastic",
-            "mediaPresence": "high",
-            "controversyTolerance": 90,
-            "verified": true
-          }
+          "avatar": "🚀"
         },
         {
           "id": "altman",
           "name": "Sam Altman",
           "type": "leader",
-          "description": "CEO of OpenAI. Young tech mogul leading the AI revolution. Survived boardroom coup, emerged stronger.",
-          "personality": "Diplomatic yet ambitious. Positions himself as responsible AI steward while aggressively expanding capabilities.",
-          "objectives": [
-            "Maintain OpenAI's AI leadership",
-            "Secure compute resources",
-            "Navigate AI regulation",
-            "Build AGI safely",
-            "Counter competition"
-          ],
-          "relationships": {
-            "musk": "enemy",
-            "nadella": "ally",
-            "zuckerberg": "enemy"
-          },
-          "resources": {
-            "military": 0,
-            "economic": 80,
-            "diplomatic": 75,
-            "popular": 50
-          },
-          "color": "#10B981",
-          "avatar": "🧠",
-          "persona": {
-            "socialHandle": "@sama",
-            "platform": "twitter",
-            "speechPatterns": [
-              "I think",
-              "The thing I've learned",
-              "We're trying to"
-            ],
-            "catchphrases": [
-              "AGI is coming",
-              "We have to get this right"
-            ],
-            "communicationStyle": "diplomatic",
-            "mediaPresence": "medium",
-            "controversyTolerance": 40,
-            "verified": true
-          }
+          "avatar": "🧠"
         },
         {
           "id": "zuckerberg",
           "name": "Mark Zuckerberg",
           "type": "leader",
-          "description": "CEO of Meta. Pivoted from social media to metaverse to AI. Attempting reputation rehabilitation.",
-          "personality": "Analytical, competitive, increasingly bold. Learning to be more human in public. Driven by fear of irrelevance.",
-          "objectives": [
-            "Make Meta AI competitive",
-            "Revive metaverse vision",
-            "Maintain social media dominance",
-            "Improve public image",
-            "Beat Elon"
-          ],
-          "relationships": {
-            "musk": "enemy",
-            "altman": "complicated",
-            "nadella": "neutral"
-          },
-          "resources": {
-            "military": 0,
-            "economic": 90,
-            "diplomatic": 50,
-            "popular": 35
-          },
-          "color": "#3B82F6",
-          "avatar": "👁️",
-          "persona": {
-            "socialHandle": "@zaborofficial",
-            "platform": "threads",
-            "speechPatterns": [
-              "So",
-              "I mean",
-              "The way I think about it"
-            ],
-            "catchphrases": [
-              "Move fast",
-              "The metaverse"
-            ],
-            "communicationStyle": "academic",
-            "mediaPresence": "medium",
-            "controversyTolerance": 30,
-            "verified": true
-          }
+          "avatar": "👁️"
         },
         {
           "id": "nadella",
           "name": "Satya Nadella",
           "type": "leader",
-          "description": "CEO of Microsoft. Transformed Microsoft through cloud and AI investments. Key OpenAI partner.",
-          "personality": "Calm, strategic, empathetic leader. Plays the long game. Avoids unnecessary conflicts.",
-          "objectives": [
-            "Win enterprise AI market",
-            "Strengthen OpenAI partnership",
-            "Maintain cloud leadership",
-            "Navigate antitrust concerns"
-          ],
-          "relationships": {
-            "altman": "ally",
-            "musk": "neutral",
-            "zuckerberg": "neutral"
-          },
-          "resources": {
-            "military": 0,
-            "economic": 95,
-            "diplomatic": 85,
-            "popular": 60
-          },
-          "color": "#7C3AED",
-          "avatar": "☁️",
-          "persona": {
-            "socialHandle": "@satloranadella",
-            "platform": "twitter",
-            "speechPatterns": [
-              "What excites me",
-              "We believe",
-              "The opportunity"
-            ],
-            "catchphrases": [
-              "Hit refresh",
-              "Growth mindset"
-            ],
-            "communicationStyle": "diplomatic",
-            "mediaPresence": "low",
-            "controversyTolerance": 15,
-            "verified": true
-          }
+          "avatar": "☁️"
         }
       ],
       "milestones": [
@@ -357,16 +535,7 @@
           "date": "2025-06-01",
           "title": "GPT-5 Release",
           "description": "OpenAI releases GPT-5, claiming major advances toward AGI capabilities.",
-          "significance": "critical",
-          "actorsInvolved": ["altman", "nadella"]
-        },
-        {
-          "id": "cage-match",
-          "date": "2025-03-15",
-          "title": "The Cage Match",
-          "description": "Musk and Zuckerberg's long-teased fight finally happens, becoming the most-watched event in streaming history.",
-          "significance": "major",
-          "actorsInvolved": ["musk", "zuckerberg"]
+          "significance": "critical"
         }
       ]
     },
@@ -377,135 +546,250 @@
       "query": "Middle East 2025 - Israel Gaza, Iran nuclear, Saudi Arabia, regional tensions",
       "region": "Middle East",
       "thumbnail": "🕌",
+      "fullScenario": {
+        "id": "middle-east-2025",
+        "title": "Middle East Crossroads",
+        "description": "Navigate the complex web of alliances, conflicts, and negotiations in the Middle East.",
+        "region": "Middle East",
+        "timeframe": {
+          "start": "2024-10-07",
+          "end": null
+        },
+        "backgroundContext": "The Middle East remains the world's most volatile region. The October 7th Hamas attack and Israel's response have reshaped the regional order. Iran's nuclear program continues to advance while facing internal dissent. Saudi Arabia's Vision 2030 drives modernization but normalization with Israel remains on hold. The humanitarian crisis in Gaza has drawn global attention and protests.",
+        "currentStatus": "Ceasefire negotiations are ongoing, mediated by Qatar and Egypt. Regional powers are jockeying for position in a potential post-conflict order. The Abraham Accords are stressed but holding. Iran's proxies remain active across multiple fronts.",
+        "keyIssues": [
+          "Gaza ceasefire and humanitarian access",
+          "Israeli-Palestinian conflict resolution",
+          "Iran nuclear negotiations",
+          "Saudi-Israel normalization prospects",
+          "Hezbollah and Lebanon stability",
+          "Yemen conflict"
+        ],
+        "actors": [
+          {
+            "id": "netanyahu",
+            "name": "Benjamin Netanyahu",
+            "type": "leader",
+            "description": "Prime Minister of Israel. Longest-serving Israeli PM, navigating war and political survival.",
+            "personality": "Survivor, master politician. Prioritizes security and political longevity. Skilled at working with US.",
+            "objectives": [
+              "Defeat Hamas",
+              "Prevent Iranian nuclear weapon",
+              "Maintain US support",
+              "Political survival"
+            ],
+            "relationships": {
+              "mbs": "complicated",
+              "khamenei": "enemy",
+              "biden": "complicated"
+            },
+            "resources": {
+              "military": 85,
+              "economic": 70,
+              "diplomatic": 55,
+              "popular": 40
+            },
+            "color": "#1E40AF",
+            "avatar": "🇮🇱",
+            "persona": {
+              "socialHandle": "@netanyahu",
+              "platform": "twitter",
+              "speechPatterns": [
+                "Israel will",
+                "We have no choice",
+                "Our enemies"
+              ],
+              "catchphrases": [
+                "Israel's right to defend itself",
+                "Never again"
+              ],
+              "communicationStyle": "aggressive",
+              "mediaPresence": "high",
+              "controversyTolerance": 75,
+              "verified": true
+            }
+          },
+          {
+            "id": "mbs",
+            "name": "Mohammed bin Salman",
+            "type": "leader",
+            "description": "Crown Prince of Saudi Arabia. Modernizing force in the Kingdom, pursuing Vision 2030.",
+            "personality": "Ambitious, ruthless when necessary, modernizer. Balancing tradition with transformation.",
+            "objectives": [
+              "Diversify Saudi economy",
+              "Regional leadership",
+              "Normalize with Israel (conditionally)",
+              "Counter Iran"
+            ],
+            "relationships": {
+              "netanyahu": "complicated",
+              "khamenei": "enemy",
+              "biden": "complicated"
+            },
+            "resources": {
+              "military": 75,
+              "economic": 95,
+              "diplomatic": 70,
+              "popular": 65
+            },
+            "color": "#059669",
+            "avatar": "🇸🇦",
+            "persona": {
+              "socialHandle": "@MBS_Saudi",
+              "platform": "twitter",
+              "speechPatterns": [
+                "The Kingdom",
+                "Vision 2030",
+                "Our region"
+              ],
+              "catchphrases": [
+                "Moderate Islam",
+                "Economic transformation"
+              ],
+              "communicationStyle": "diplomatic",
+              "mediaPresence": "medium",
+              "controversyTolerance": 60,
+              "verified": true
+            }
+          },
+          {
+            "id": "khamenei",
+            "name": "Ali Khamenei",
+            "type": "leader",
+            "description": "Supreme Leader of Iran. Ultimate authority in the Islamic Republic, overseeing nuclear and regional policies.",
+            "personality": "Ideological, suspicious of West, patient strategist. Balances hardliners and pragmatists.",
+            "objectives": [
+              "Regime survival",
+              "Nuclear capability",
+              "Regional influence",
+              "Resist Western pressure"
+            ],
+            "relationships": {
+              "netanyahu": "enemy",
+              "mbs": "enemy",
+              "putin": "ally"
+            },
+            "resources": {
+              "military": 70,
+              "economic": 35,
+              "diplomatic": 40,
+              "popular": 45
+            },
+            "color": "#7F1D1D",
+            "avatar": "🇮🇷",
+            "persona": {
+              "socialHandle": "@khaboranei_ir",
+              "platform": "telegram",
+              "speechPatterns": [
+                "The Islamic Republic",
+                "Resistance",
+                "The Great Satan"
+              ],
+              "catchphrases": [
+                "Death to America",
+                "Zionist entity"
+              ],
+              "communicationStyle": "cryptic",
+              "mediaPresence": "low",
+              "controversyTolerance": 95,
+              "verified": true
+            }
+          },
+          {
+            "id": "erdogan",
+            "name": "Recep Tayyip Erdogan",
+            "type": "leader",
+            "description": "President of Turkey. NATO member navigating between East and West.",
+            "personality": "Nationalist, opportunistic, unpredictable. Uses regional crises to enhance Turkey's position.",
+            "objectives": [
+              "Regional influence",
+              "Kurdish containment",
+              "Economic recovery",
+              "Lead Muslim world voice"
+            ],
+            "relationships": {
+              "netanyahu": "enemy",
+              "mbs": "complicated",
+              "putin": "complicated"
+            },
+            "resources": {
+              "military": 75,
+              "economic": 50,
+              "diplomatic": 60,
+              "popular": 50
+            },
+            "color": "#DC2626",
+            "avatar": "🇹🇷",
+            "persona": {
+              "socialHandle": "@RTErdogan",
+              "platform": "twitter",
+              "speechPatterns": [
+                "Turkey",
+                "Our nation",
+                "The Muslim world"
+              ],
+              "catchphrases": [
+                "Turkey's century",
+                "One nation, one flag"
+              ],
+              "communicationStyle": "aggressive",
+              "mediaPresence": "high",
+              "controversyTolerance": 80,
+              "verified": true
+            }
+          }
+        ],
+        "milestones": [
+          {
+            "id": "gaza-war",
+            "date": "2024-10-07",
+            "title": "October 7th Attack",
+            "description": "Hamas launches surprise attack on Israel, triggering massive military response and regional escalation.",
+            "significance": "critical",
+            "actorsInvolved": ["netanyahu"]
+          },
+          {
+            "id": "ceasefire-talks",
+            "date": "2025-01-15",
+            "title": "Ceasefire Negotiations",
+            "description": "Qatar mediates ceasefire talks between Israel and Hamas. Regional powers watch closely.",
+            "significance": "major",
+            "actorsInvolved": ["netanyahu", "mbs"]
+          },
+          {
+            "id": "iran-enrichment",
+            "date": "2025-01-20",
+            "title": "Iran 60% Enrichment",
+            "description": "IAEA confirms Iran has stockpiled significant amounts of 60% enriched uranium.",
+            "significance": "major",
+            "actorsInvolved": ["khamenei", "netanyahu"]
+          }
+        ]
+      },
       "actors": [
         {
           "id": "netanyahu",
           "name": "Benjamin Netanyahu",
           "type": "leader",
-          "description": "Prime Minister of Israel. Longest-serving Israeli PM, navigating war and political survival.",
-          "personality": "Survivor, master politician. Prioritizes security and political longevity. Skilled at working with US.",
-          "objectives": [
-            "Defeat Hamas",
-            "Prevent Iranian nuclear weapon",
-            "Maintain US support",
-            "Political survival"
-          ],
-          "relationships": {
-            "biden": "complicated",
-            "mbs": "complicated",
-            "khamenei": "enemy"
-          },
-          "resources": {
-            "military": 85,
-            "economic": 70,
-            "diplomatic": 55,
-            "popular": 40
-          },
-          "color": "#1E40AF",
-          "avatar": "🇮🇱",
-          "persona": {
-            "socialHandle": "@netanyahu",
-            "platform": "twitter",
-            "speechPatterns": [
-              "Israel will",
-              "We have no choice",
-              "Our enemies"
-            ],
-            "catchphrases": [
-              "Israel's right to defend itself",
-              "Never again"
-            ],
-            "communicationStyle": "aggressive",
-            "mediaPresence": "high",
-            "controversyTolerance": 75,
-            "verified": true
-          }
+          "avatar": "🇮🇱"
         },
         {
           "id": "mbs",
           "name": "Mohammed bin Salman",
           "type": "leader",
-          "description": "Crown Prince of Saudi Arabia. Modernizing force in the Kingdom, pursuing Vision 2030.",
-          "personality": "Ambitious, ruthless when necessary, modernizer. Balancing tradition with transformation.",
-          "objectives": [
-            "Diversify Saudi economy",
-            "Regional leadership",
-            "Normalize with Israel (conditionally)",
-            "Counter Iran"
-          ],
-          "relationships": {
-            "netanyahu": "complicated",
-            "khamenei": "enemy",
-            "biden": "complicated"
-          },
-          "resources": {
-            "military": 75,
-            "economic": 95,
-            "diplomatic": 70,
-            "popular": 65
-          },
-          "color": "#059669",
-          "avatar": "🇸🇦",
-          "persona": {
-            "socialHandle": "@MoijSalman",
-            "platform": "twitter",
-            "speechPatterns": [
-              "The Kingdom",
-              "Vision 2030",
-              "Our region"
-            ],
-            "catchphrases": [
-              "Moderate Islam",
-              "Economic transformation"
-            ],
-            "communicationStyle": "diplomatic",
-            "mediaPresence": "medium",
-            "controversyTolerance": 60,
-            "verified": true
-          }
+          "avatar": "🇸🇦"
         },
         {
           "id": "khamenei",
           "name": "Ali Khamenei",
           "type": "leader",
-          "description": "Supreme Leader of Iran. Ultimate authority in the Islamic Republic, overseeing nuclear and regional policies.",
-          "personality": "Ideological, suspicious of West, patient strategist. Balances hardliners and pragmatists.",
-          "objectives": [
-            "Regime survival",
-            "Nuclear capability",
-            "Regional influence",
-            "Resist Western pressure"
-          ],
-          "relationships": {
-            "netanyahu": "enemy",
-            "mbs": "enemy",
-            "putin": "ally"
-          },
-          "resources": {
-            "military": 70,
-            "economic": 35,
-            "diplomatic": 40,
-            "popular": 45
-          },
-          "color": "#7F1D1D",
-          "avatar": "🇮🇷",
-          "persona": {
-            "socialHandle": "@khaboranei_ir",
-            "platform": "telegram",
-            "speechPatterns": [
-              "The Islamic Republic",
-              "Resistance",
-              "The Great Satan"
-            ],
-            "catchphrases": [
-              "Death to America",
-              "Zionist entity"
-            ],
-            "communicationStyle": "cryptic",
-            "mediaPresence": "low",
-            "controversyTolerance": 95,
-            "verified": true
-          }
+          "avatar": "🇮🇷"
+        },
+        {
+          "id": "erdogan",
+          "name": "Recep Tayyip Erdogan",
+          "type": "leader",
+          "avatar": "🇹🇷"
         }
       ],
       "milestones": [
@@ -513,17 +797,8 @@
           "id": "gaza-war",
           "date": "2024-10-07",
           "title": "October 7th Attack",
-          "description": "Hamas launches surprise attack on Israel, triggering massive military response and regional escalation.",
-          "significance": "critical",
-          "actorsInvolved": ["netanyahu"]
-        },
-        {
-          "id": "ceasefire-talks",
-          "date": "2025-01-15",
-          "title": "Ceasefire Negotiations",
-          "description": "Qatar mediates ceasefire talks between Israel and Hamas.",
-          "significance": "major",
-          "actorsInvolved": ["netanyahu"]
+          "description": "Hamas launches surprise attack on Israel.",
+          "significance": "critical"
         }
       ]
     }

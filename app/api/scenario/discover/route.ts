@@ -12,9 +12,22 @@ const model = genAI.getGenerativeModel({
   },
 });
 
+// Streaming model (for progress updates)
+const streamingModel = genAI.getGenerativeModel({ 
+  model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+});
+
+// Cache for prompt templates
+const promptCache = new Map<string, string>();
+
 async function getPromptTemplate(name: string): Promise<string> {
+  if (promptCache.has(name)) {
+    return promptCache.get(name)!;
+  }
   const promptPath = path.join(process.cwd(), 'resources', 'prompts', `${name}.txt`);
-  return fs.readFile(promptPath, 'utf-8');
+  const content = await fs.readFile(promptPath, 'utf-8');
+  promptCache.set(name, content);
+  return content;
 }
 
 /**
@@ -39,11 +52,9 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutM
  * Extract text content from HTML
  */
 function extractTextFromHtml(html: string): { content: string; title?: string } {
-  // Extract title
   const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
   const title = titleMatch ? titleMatch[1].trim() : undefined;
   
-  // Remove script and style elements
   let content = html
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
@@ -51,7 +62,6 @@ function extractTextFromHtml(html: string): { content: string; title?: string } 
     .replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, '')
     .replace(/<header[^>]*>[\s\S]*?<\/header>/gi, '');
   
-  // Get article or main content if available
   const articleMatch = content.match(/<article[^>]*>([\s\S]*?)<\/article>/i);
   const mainMatch = content.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
   
@@ -61,7 +71,6 @@ function extractTextFromHtml(html: string): { content: string; title?: string } 
     content = mainMatch[1];
   }
   
-  // Remove remaining HTML tags and clean up whitespace
   content = content
     .replace(/<[^>]+>/g, ' ')
     .replace(/&nbsp;/g, ' ')
@@ -82,19 +91,15 @@ function extractTextFromHtml(html: string): { content: string; title?: string } 
 async function extractUrlContent(url: string): Promise<{ content: string; title?: string; source: string }> {
   const errors: string[] = [];
 
-  // Try Jina Reader first (free, no API key needed)
+  // Try Jina Reader first
   try {
     const jinaUrl = `https://r.jina.ai/${url}`;
     const jinaResponse = await fetchWithTimeout(jinaUrl, {
-      headers: {
-        'Accept': 'text/plain',
-        'X-No-Cache': 'true',
-      },
+      headers: { 'Accept': 'text/plain', 'X-No-Cache': 'true' },
     });
     
     if (jinaResponse.ok) {
       const content = await jinaResponse.text();
-      // Check for error responses from Jina
       if (content && content.length > 100 && !content.includes('SecurityCompromiseError') && !content.includes('"code":4')) {
         return { content, source: 'jina' };
       }
@@ -114,10 +119,7 @@ async function extractUrlContent(url: string): Promise<{ content: string; title?
       const tavilyResponse = await fetchWithTimeout('https://api.tavily.com/extract', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          api_key: process.env.TAVILY_API_KEY,
-          urls: [url],
-        }),
+        body: JSON.stringify({ api_key: process.env.TAVILY_API_KEY, urls: [url] }),
       });
 
       if (tavilyResponse.ok) {
@@ -126,11 +128,7 @@ async function extractUrlContent(url: string): Promise<{ content: string; title?
           const result = data.results[0];
           const content = result.raw_content || result.content || '';
           if (content.length > 100) {
-            return { 
-              content, 
-              title: result.title,
-              source: 'tavily' 
-            };
+            return { content, title: result.title, source: 'tavily' };
           }
         }
         errors.push('Tavily: Empty content returned');
@@ -142,19 +140,14 @@ async function extractUrlContent(url: string): Promise<{ content: string; title?
     }
   }
 
-  // Fallback: Direct fetch with browser-like headers
+  // Fallback: Direct fetch
   let httpStatus: number | null = null;
   let pageTitle: string | undefined;
   try {
     const directResponse = await fetchWithTimeout(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'DNT': '1',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       },
     });
 
@@ -165,7 +158,6 @@ async function extractUrlContent(url: string): Promise<{ content: string; title?
       const extracted = extractTextFromHtml(html);
       pageTitle = extracted.title;
       
-      // Check if this is a 404/error page based on title
       const is404Page = pageTitle?.toLowerCase().includes('not found') || 
                         pageTitle?.toLowerCase().includes('404') ||
                         pageTitle?.toLowerCase().includes('error');
@@ -173,13 +165,9 @@ async function extractUrlContent(url: string): Promise<{ content: string; title?
       if (is404Page) {
         errors.push('Direct: Page not found (404)');
       } else if (extracted.content.length > 200) {
-        return { 
-          content: extracted.content, 
-          title: extracted.title,
-          source: 'direct' 
-        };
+        return { content: extracted.content, title: extracted.title, source: 'direct' };
       } else {
-        errors.push('Direct: Content too short after extraction');
+        errors.push('Direct: Content too short');
       }
     } else {
       errors.push(`Direct: HTTP ${directResponse.status}`);
@@ -190,7 +178,6 @@ async function extractUrlContent(url: string): Promise<{ content: string; title?
 
   console.error('All extraction methods failed:', errors);
   
-  // Provide a more specific error message
   if (httpStatus === 404 || pageTitle?.toLowerCase().includes('not found')) {
     throw new Error('PAGE_NOT_FOUND');
   } else if (errors.some(e => e.includes('Domain temporarily blocked'))) {
@@ -203,27 +190,80 @@ async function extractUrlContent(url: string): Promise<{ content: string; title?
 }
 
 /**
- * Generate search queries based on extracted content to gather additional context
+ * Run a single Tavily search
  */
-async function generateSearchQueriesFromContent(content: string): Promise<string[]> {
-  const prompt = `Based on this content, generate 3 search queries to find additional context about the key actors, timeline, and background of the events described. Return as JSON: { "queries": ["query1", "query2", "query3"] }
-
-Content:
-${content.slice(0, 2000)}`;
-
+async function runTavilySearch(searchQuery: string): Promise<string> {
+  if (!process.env.TAVILY_API_KEY) return '';
+  
   try {
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
-    const parsed = JSON.parse(responseText || '{}');
-    return parsed.queries || [];
+    const tavilyResponse = await fetchWithTimeout('https://api.tavily.com/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        api_key: process.env.TAVILY_API_KEY,
+        query: searchQuery,
+        search_depth: 'basic',
+        max_results: 3,
+      }),
+    }, 10000);
+    
+    if (tavilyResponse.ok) {
+      const data = await tavilyResponse.json();
+      return data?.results?.map((res: any) => `${res.title}: ${res.content}`).join('\n') || '';
+    }
   } catch {
-    return [];
+    // Silently fail
   }
+  return '';
+}
+
+function generateDefaultSearchQueries(query: string): string[] {
+  const baseQuery = query.slice(0, 100);
+  return [
+    `${baseQuery} latest news`,
+    `${baseQuery} key actors involved`,
+    `${baseQuery} timeline events`,
+  ];
+}
+
+function getActorColor(index: number): string {
+  const colors = [
+    '#6366f1', '#ef4444', '#22c55e', '#f59e0b', '#3b82f6',
+    '#ec4899', '#8b5cf6', '#14b8a6', '#f97316', '#06b6d4',
+  ];
+  return colors[index % colors.length];
+}
+
+/**
+ * Extract JSON from text that might contain markdown code blocks
+ */
+function extractJSON(text: string): string {
+  let cleaned = text.trim();
+  if (cleaned.startsWith('```json')) cleaned = cleaned.slice(7);
+  else if (cleaned.startsWith('```')) cleaned = cleaned.slice(3);
+  if (cleaned.endsWith('```')) cleaned = cleaned.slice(0, -3);
+  return cleaned.trim();
+}
+
+/**
+ * Process and normalize scenario data
+ */
+function processScenario(scenario: Scenario): Scenario {
+  scenario.id = scenario.id || crypto.randomUUID();
+  scenario.actors = scenario.actors.map((actor, i) => ({
+    ...actor,
+    id: actor.id || `actor-${i}`,
+    color: actor.color || getActorColor(i),
+  }));
+  scenario.milestones = scenario.milestones.map((milestone, i) => ({
+    ...milestone,
+    id: milestone.id || `milestone-${i}`,
+  }));
+  return scenario;
 }
 
 export async function POST(request: NextRequest) {
   try {
-    // Check for API key first
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
         { error: 'Gemini API key is not configured. Please add GEMINI_API_KEY to your .env.local file.' },
@@ -237,23 +277,168 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Either query or sourceUrl is required' }, { status: 400 });
     }
 
-    // Determine if this is a URL-based or query-based discovery
+    // Check if client wants streaming
+    const acceptHeader = request.headers.get('accept') || '';
+    const wantsStream = acceptHeader.includes('text/event-stream');
+
     const isUrlBased = !!sourceUrl;
+    
+    // Start loading prompt template immediately
+    const promptTemplatePromise = getPromptTemplate(
+      isUrlBased ? 'url-scenario-discovery' : 'scenario-discovery'
+    );
+
+    // STREAMING RESPONSE
+    if (wantsStream) {
+      const encoder = new TextEncoder();
+      
+      const stream = new ReadableStream({
+        async start(controller) {
+          try {
+            let extractedContent = '';
+            let searchContext = '';
+            let effectiveQuery = query || '';
+
+            // Step 1: Extract content (if URL-based)
+            if (isUrlBased) {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'progress', step: 'extracting', message: 'Extracting content from URL...' })}\n\n`));
+              
+              const basicSearchQueries = generateDefaultSearchQueries(sourceUrl);
+              
+              const [extractionResult, ...basicSearchResults] = await Promise.allSettled([
+                extractUrlContent(sourceUrl),
+                ...basicSearchQueries.map(q => runTavilySearch(q))
+              ]);
+
+              if (extractionResult.status === 'rejected') {
+                const errorMessage = extractionResult.reason?.message || '';
+                let userMessage = 'Failed to extract content from the provided URL.';
+                if (errorMessage === 'PAGE_NOT_FOUND') userMessage = 'The URL returned a "Page Not Found" error.';
+                else if (errorMessage === 'DOMAIN_BLOCKED') userMessage = 'This website is temporarily unavailable.';
+                else if (errorMessage === 'TIMEOUT') userMessage = 'The request timed out.';
+                
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'error', message: userMessage })}\n\n`));
+                controller.close();
+                return;
+              }
+
+              const extracted = extractionResult.value;
+              extractedContent = extracted.content;
+              effectiveQuery = extractedContent.slice(0, 500);
+
+              searchContext = basicSearchResults
+                .filter((r): r is PromiseFulfilledResult<string> => r.status === 'fulfilled' && !!r.value)
+                .map(r => r.value)
+                .join('\n\n');
+                
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'progress', step: 'extracted', message: 'Content extracted successfully' })}\n\n`));
+            } else {
+              // Query-based: Run searches
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'progress', step: 'searching', message: 'Searching for context...' })}\n\n`));
+              
+              const defaultQueries = generateDefaultSearchQueries(query);
+              const searchResults = await Promise.allSettled(defaultQueries.map(q => runTavilySearch(q)));
+              
+              searchContext = searchResults
+                .filter((r): r is PromiseFulfilledResult<string> => r.status === 'fulfilled' && !!r.value)
+                .map(r => r.value)
+                .join('\n\n');
+                
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'progress', step: 'searched', message: 'Context gathered' })}\n\n`));
+            }
+
+            // Step 2: Generate scenario
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'progress', step: 'generating', message: 'Generating scenario with AI...', progress: 30 })}\n\n`));
+
+            const systemPrompt = await promptTemplatePromise;
+            
+            let userMessage: string;
+            if (isUrlBased) {
+              userMessage = `## EXTRACTED CONTENT FROM URL
+Source URL: ${sourceUrl}
+
+${extractedContent.slice(0, 8000)}
+
+${searchContext ? `## ADDITIONAL CONTEXT FROM WEB SEARCH\n${searchContext}` : ''}
+
+${timeframe ? `Timeframe: ${timeframe}` : ''}
+
+Based on the above URL content and additional context, create a comprehensive geopolitical scenario. IMPORTANT: Return ONLY valid JSON.`;
+            } else {
+              userMessage = searchContext 
+                ? `Analyze this scenario: "${query}"${timeframe ? ` (timeframe: ${timeframe})` : ''}\n\nHere is current information from web search:\n${searchContext}\n\nIMPORTANT: Return ONLY valid JSON.`
+                : `Analyze this scenario: "${query}"${timeframe ? ` (timeframe: ${timeframe})` : ''}\n\nIMPORTANT: Return ONLY valid JSON.`;
+            }
+
+            const fullPrompt = `${systemPrompt}\n\n${userMessage}`;
+            
+            // Use streaming for LLM generation
+            const result = await streamingModel.generateContentStream(fullPrompt);
+            let fullText = '';
+            let chunkCount = 0;
+
+            for await (const chunk of result.stream) {
+              const chunkText = chunk.text();
+              fullText += chunkText;
+              chunkCount++;
+
+              // Send progress updates
+              if (chunkCount % 5 === 0) {
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ 
+                  type: 'progress', 
+                  step: 'generating',
+                  message: 'Building scenario...',
+                  progress: Math.min(90, 30 + chunkCount * 2)
+                })}\n\n`));
+              }
+            }
+
+            // Parse and process scenario
+            const cleanedJson = extractJSON(fullText);
+            const scenario: Scenario = JSON.parse(cleanedJson);
+            const processed = processScenario(scenario);
+
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ 
+              type: 'complete', 
+              scenario: processed 
+            })}\n\n`));
+
+            controller.close();
+          } catch (error) {
+            console.error('Streaming scenario discovery error:', error);
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ 
+              type: 'error', 
+              message: 'Failed to discover scenario. Please try again.' 
+            })}\n\n`));
+            controller.close();
+          }
+        },
+      });
+
+      return new Response(stream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
+      });
+    }
+
+    // NON-STREAMING RESPONSE (original behavior)
     let extractedContent = '';
+    let searchContext = '';
     let effectiveQuery = query || '';
 
-    // If URL provided, extract content from it
     if (isUrlBased) {
-      try {
-        const extracted = await extractUrlContent(sourceUrl);
-        extractedContent = extracted.content;
-        // Use the first 200 chars of extracted content as a summary for search queries
-        effectiveQuery = extractedContent.slice(0, 500);
-        console.log(`Extracted ${extractedContent.length} chars from URL via ${extracted.source}`);
-      } catch (err) {
-        console.error('URL extraction failed:', err);
-        const errorMessage = err instanceof Error ? err.message : '';
-        
+      const basicSearchQueries = generateDefaultSearchQueries(sourceUrl);
+      
+      const [extractionResult, ...basicSearchResults] = await Promise.allSettled([
+        extractUrlContent(sourceUrl),
+        ...basicSearchQueries.map(q => runTavilySearch(q))
+      ]);
+
+      if (extractionResult.status === 'rejected') {
+        const errorMessage = extractionResult.reason?.message || '';
         let userMessage = 'Failed to extract content from the provided URL. Please check the URL and try again.';
         if (errorMessage === 'PAGE_NOT_FOUND') {
           userMessage = 'The URL returned a "Page Not Found" error. Please check that the URL is complete and valid.';
@@ -262,73 +447,68 @@ export async function POST(request: NextRequest) {
         } else if (errorMessage === 'TIMEOUT') {
           userMessage = 'The request timed out. The website may be slow or unavailable. Please try again.';
         }
-        
-        return NextResponse.json(
-          { error: userMessage },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: userMessage }, { status: 400 });
       }
-    }
 
-    // Get the appropriate prompt template
-    const systemPrompt = await getPromptTemplate(
-      isUrlBased ? 'url-scenario-discovery' : 'scenario-discovery'
-    );
+      const extracted = extractionResult.value;
+      extractedContent = extracted.content;
+      effectiveQuery = extractedContent.slice(0, 500);
+      console.log(`Extracted ${extractedContent.length} chars from URL via ${extracted.source}`);
 
-    // Use web search to gather current information (if available)
-    let searchContext = '';
-    try {
-      let searchQueriesToUse: string[] = [];
-
-      if (isUrlBased && extractedContent) {
-        // For URL-based: generate queries from the extracted content
-        searchQueriesToUse = await generateSearchQueriesFromContent(extractedContent);
-      } else {
-        // For query-based: use the existing prompt template
-        const searchQueryPrompt = await getPromptTemplate('web-search-query');
-        const queryPrompt = `${searchQueryPrompt.replace('{{USER_QUERY}}', effectiveQuery)}\n\nGenerate search queries for: ${effectiveQuery}`;
-        
-        const queryResult = await model.generateContent(queryPrompt);
-        const queryResponseText = queryResult.response.text();
-        const searchQueries = JSON.parse(queryResponseText || '{}');
-        searchQueriesToUse = (searchQueries.queries || []).map((q: { query: string }) => q.query);
-      }
+      searchContext = basicSearchResults
+        .filter((r): r is PromiseFulfilledResult<string> => r.status === 'fulfilled' && !!r.value)
+        .map(r => r.value)
+        .join('\n\n');
+    } else {
+      const defaultQueries = generateDefaultSearchQueries(query);
       
-      // If Tavily API is available, use it for search
-      if (process.env.TAVILY_API_KEY && searchQueriesToUse.length > 0) {
-        const searchPromises = searchQueriesToUse.slice(0, 3).map(async (searchQuery: string) => {
+      const [searchQueryPromptResult, ...defaultSearchResults] = await Promise.allSettled([
+        (async () => {
           try {
-            const tavilyResponse = await fetch('https://api.tavily.com/search', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                api_key: process.env.TAVILY_API_KEY,
-                query: searchQuery,
-                search_depth: 'basic',
-                max_results: 3,
-              }),
-            });
-            return tavilyResponse.json();
+            const searchQueryPrompt = await getPromptTemplate('web-search-query');
+            const queryPrompt = `${searchQueryPrompt.replace('{{USER_QUERY}}', effectiveQuery)}\n\nGenerate search queries for: ${effectiveQuery}`;
+            const queryResult = await model.generateContent(queryPrompt);
+            const queryResponseText = queryResult.response.text();
+            const searchQueries = JSON.parse(queryResponseText || '{}');
+            return (searchQueries.queries || []).map((q: { query: string }) => q.query) as string[];
           } catch {
-            return null;
+            return [];
           }
-        });
+        })(),
+        ...defaultQueries.map(q => runTavilySearch(q))
+      ]);
 
-        const searchResults = await Promise.all(searchPromises);
-        searchContext = searchResults
-          .filter(Boolean)
-          .map((r: any) => r?.results?.map((res: any) => `${res.title}: ${res.content}`).join('\n'))
-          .join('\n\n');
+      searchContext = defaultSearchResults
+        .filter((r): r is PromiseFulfilledResult<string> => r.status === 'fulfilled' && !!r.value)
+        .map(r => r.value)
+        .join('\n\n');
+
+      if (searchQueryPromptResult.status === 'fulfilled' && searchQueryPromptResult.value.length > 0) {
+        const llmQueries = searchQueryPromptResult.value;
+        const additionalQueries = llmQueries.filter((q: string) => 
+          !defaultQueries.some(dq => dq.toLowerCase().includes(q.toLowerCase().slice(0, 20)))
+        ).slice(0, 2);
+
+        if (additionalQueries.length > 0) {
+          const additionalResults = await Promise.allSettled(
+            additionalQueries.map((q: string) => runTavilySearch(q))
+          );
+          const additionalContext = additionalResults
+            .filter((r): r is PromiseFulfilledResult<string> => r.status === 'fulfilled' && !!r.value)
+            .map(r => r.value)
+            .join('\n\n');
+          
+          if (additionalContext) {
+            searchContext = searchContext ? `${searchContext}\n\n${additionalContext}` : additionalContext;
+          }
+        }
       }
-    } catch (err) {
-      console.log('Search skipped:', err);
     }
 
-    // Generate the scenario
+    const systemPrompt = await promptTemplatePromise;
+
     let userMessage: string;
-    
     if (isUrlBased) {
-      // URL-based: provide extracted content as primary source
       userMessage = `## EXTRACTED CONTENT FROM URL
 Source URL: ${sourceUrl}
 
@@ -340,7 +520,6 @@ ${timeframe ? `Timeframe: ${timeframe}` : ''}
 
 Based on the above URL content and additional context, create a comprehensive geopolitical scenario.`;
     } else {
-      // Query-based: existing behavior
       userMessage = searchContext 
         ? `Analyze this scenario: "${query}"${timeframe ? ` (timeframe: ${timeframe})` : ''}\n\nHere is current information from web search:\n${searchContext}`
         : `Analyze this scenario: "${query}"${timeframe ? ` (timeframe: ${timeframe})` : ''}`;
@@ -354,27 +533,14 @@ Based on the above URL content and additional context, create a comprehensive ge
     }
 
     const scenario: Scenario = JSON.parse(content);
+    const processed = processScenario(scenario);
 
-    // Ensure IDs are set
-    scenario.id = scenario.id || crypto.randomUUID();
-    scenario.actors = scenario.actors.map((actor, i) => ({
-      ...actor,
-      id: actor.id || `actor-${i}`,
-      color: actor.color || getActorColor(i),
-    }));
-    scenario.milestones = scenario.milestones.map((milestone, i) => ({
-      ...milestone,
-      id: milestone.id || `milestone-${i}`,
-    }));
-
-    return NextResponse.json({ scenario });
+    return NextResponse.json({ scenario: processed });
   } catch (error) {
     console.error('Scenario discovery error:', error);
     
-    // Check for specific error types
     const errorMessage = error instanceof Error ? error.message : String(error);
     
-    // Handle Gemini API authentication errors
     if (errorMessage.includes('403') || errorMessage.includes('unregistered callers') || errorMessage.includes('API Key')) {
       return NextResponse.json(
         { error: 'Invalid or expired Gemini API key. Please check your GEMINI_API_KEY in .env.local.' },
@@ -382,7 +548,6 @@ Based on the above URL content and additional context, create a comprehensive ge
       );
     }
     
-    // Handle rate limiting
     if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('rate limit')) {
       return NextResponse.json(
         { error: 'API rate limit exceeded. Please wait a moment and try again.' },
@@ -395,12 +560,4 @@ Based on the above URL content and additional context, create a comprehensive ge
       { status: 500 }
     );
   }
-}
-
-function getActorColor(index: number): string {
-  const colors = [
-    '#6366f1', '#ef4444', '#22c55e', '#f59e0b', '#3b82f6',
-    '#ec4899', '#8b5cf6', '#14b8a6', '#f97316', '#06b6d4',
-  ];
-  return colors[index % colors.length];
 }
