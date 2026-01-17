@@ -2,6 +2,7 @@
 
 import { useGameStore } from '@/lib/store';
 import { useAuth } from '@/lib/auth-context';
+import { useAutosave, type AutosaveStatus } from '@/lib/useAutosave';
 import { ActorsSidebar } from './ActorsSidebar';
 import { EventFeed } from './EventFeed';
 import { ChatView } from './ChatView';
@@ -13,25 +14,68 @@ import { SessionManager } from './SessionManager';
 import { LoginModal } from '@/components/auth/LoginModal';
 import { UserMenu } from '@/components/auth/UserMenu';
 import { AnalyticsModal } from '@/components/analytics';
-import { Menu, X, Users, ScrollText, Save, History, LogIn } from 'lucide-react';
+import { X, Users, ScrollText, History, LogIn, Cloud, CloudOff, Loader2, Check } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SummaryModal } from './SummaryModal';
+import { formatDistanceToNow } from 'date-fns';
+
+// Autosave status indicator component
+function AutosaveIndicator({ 
+  status, 
+  lastSavedAt 
+}: { 
+  status: AutosaveStatus; 
+  lastSavedAt: Date | null;
+}) {
+  if (status === 'idle' && !lastSavedAt) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="flex items-center gap-1.5 text-[10px] sm:text-xs text-gray-500"
+    >
+      {status === 'saving' && (
+        <>
+          <Loader2 className="w-3 h-3 animate-spin text-game-accent" />
+          <span className="hidden sm:inline text-game-accent">Saving...</span>
+        </>
+      )}
+      {status === 'saved' && (
+        <>
+          <Check className="w-3 h-3 text-green-400" />
+          <span className="hidden sm:inline text-green-400">Saved</span>
+        </>
+      )}
+      {status === 'error' && (
+        <>
+          <CloudOff className="w-3 h-3 text-red-400" />
+          <span className="hidden sm:inline text-red-400">Save failed</span>
+        </>
+      )}
+      {status === 'idle' && lastSavedAt && (
+        <>
+          <Cloud className="w-3 h-3" />
+          <span className="hidden lg:inline">
+            Saved {formatDistanceToNow(lastSavedAt, { addSuffix: true })}
+          </span>
+        </>
+      )}
+    </motion.div>
+  );
+}
 
 export function GameInterface() {
   const { scenario, viewMode, currentTurn, playerGoal, resetGame } = useGameStore();
   const { user, isLoading } = useAuth();
+  const { status: autosaveStatus, lastSavedAt } = useAutosave();
   const [showSidebar, setShowSidebar] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showSessions, setShowSessions] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [sessionInitialTab, setSessionInitialTab] = useState<'sessions' | 'save'>('sessions');
-
-  const openSaveTab = () => {
-    setSessionInitialTab('save');
-    setShowSessions(true);
-  };
 
   const openSessionsTab = () => {
     setSessionInitialTab('sessions');
@@ -76,15 +120,9 @@ export function GameInterface() {
             
             <div className="hidden sm:block h-4 w-px bg-game-border mx-1" />
             
-            {/* Save button */}
+            {/* Autosave indicator */}
             {user && (
-              <button
-                onClick={openSaveTab}
-                className="hidden xs:flex items-center gap-1.5 px-1.5 sm:px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
-              >
-                <Save className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Save</span>
-              </button>
+              <AutosaveIndicator status={autosaveStatus} lastSavedAt={lastSavedAt} />
             )}
             
             {/* Sessions button */}
@@ -187,15 +225,9 @@ export function GameInterface() {
           
           <div className="hidden sm:block h-4 w-px bg-game-border mx-1" />
           
-          {/* Save button */}
+          {/* Autosave indicator */}
           {user && (
-            <button
-              onClick={openSaveTab}
-              className="hidden xs:flex items-center gap-1.5 px-1.5 sm:px-2 py-1.5 bg-white/5 hover:bg-white/10 rounded text-xs transition-colors"
-            >
-              <Save className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Save</span>
-            </button>
+            <AutosaveIndicator status={autosaveStatus} lastSavedAt={lastSavedAt} />
           )}
           
           {/* Sessions button */}
